@@ -5,11 +5,11 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Jeecg Boot</span>
+            <span class="title">联通在线 5G消息</span>
           </a>
         </div>
         <div class="desc">
-          联通在线CSP运营管理平台
+          CSP运营管理平台
         </div>
       </div>
 

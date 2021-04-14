@@ -29,7 +29,7 @@
           </a-row>
         </a-tab-pane>
 
-        <a-tab-pane key="tab2" tab="手机号登录">
+        <!-- <a-tab-pane key="tab2" tab="手机号登录">
           <a-form-model-item required prop="mobile">
             <a-input v-model="model.mobile" size="large" type="text" placeholder="请输入手机号">
               <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
@@ -52,11 +52,11 @@
                 v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"></a-button>
             </a-col>
           </a-row>
-        </a-tab-pane>
+        </a-tab-pane> -->
 
       </a-tabs>
 
-      <a-form-model-item>
+      <!-- <a-form-model-item>
         <a-checkbox @change="handleRememberMeChange" default-checked>自动登录</a-checkbox>
         <router-link :to="{ name: 'alteration'}" class="forge-password" style="float: right;">
           忘记密码
@@ -64,7 +64,7 @@
         <router-link :to="{ name: 'register'}" class="forge-password" style="float: right;margin-right: 10px" >
           注册账户
         </router-link>
-      </a-form-model-item>
+      </a-form-model-item> -->
 
       <a-form-item style="margin-top:24px">
         <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn" @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定</a-button>
@@ -74,7 +74,7 @@
 
     <two-step-captcha v-if="requiredTwoStepCaptcha"  :visible="stepCaptchaVisible"  @success="stepCaptchaSuccess"  @cancel="stepCaptchaCancel"></two-step-captcha>
     <login-select-tenant ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
-    <third-login ref="thirdLogin"></third-login>
+    <!-- <third-login ref="thirdLogin"></third-login> -->
   </div>
 </template>
 
