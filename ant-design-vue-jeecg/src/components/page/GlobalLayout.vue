@@ -573,7 +573,7 @@
       height: 64px;
       position: relative;
       line-height: 64px;
-      padding-left: 24px;
+      padding-left: 10px;
       -webkit-transition: all .3s;
       transition: all .3s;
       background: #002140;
