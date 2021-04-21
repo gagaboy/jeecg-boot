@@ -1,25 +1,37 @@
 <template>
   <div id="userLayout" :class="['user-layout-wrapper', device]">
     <div class="container">
+      <vue-particles
+        color="#F0F2F5"
+        :particleOpacity="0.7"
+        :particlesNumber="80"
+        shapeType="circle"
+        :particleSize="4"
+        linesColor="#F0F2F5"
+        :linesWidth="1"
+        :lineLinked="true"
+        :lineOpacity="0.4"
+        :linesDistance="150"
+        :moveSpeed="3"
+        :hoverEffect="true"
+        hoverMode="grab"
+        :clickEffect="true"
+        clickMode="push"
+      ></vue-particles>
       <div class="top">
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">联通在线 5G消息</span>
+            <span class="title">联通CSP运营管理平台</span>
           </a>
         </div>
-        <div class="desc">
+        <!-- <div class="desc">
           CSP运营管理平台
-        </div>
+        </div> -->
       </div>
-
       <route-view></route-view>
-
       <div class="footer">
         <div class="links">
-<!--          <a href="http://doc.jeecg.com" target="_blank">帮助</a>-->
-<!--          <a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>-->
-<!--          <a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>-->
         </div>
         <div class="copyright">
           Copyright &copy; 2021 <a href="http://wo.com.cn" target="_blank">联通在线</a> 出品
@@ -52,7 +64,6 @@
 <style lang="less" scoped>
   #userLayout.user-layout-wrapper {
     height: 100%;
-
     &.mobile {
       .container {
         .main {
@@ -65,7 +76,7 @@
     .container {
       width: 100%;
       min-height: 100%;
-      background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
+      background: #f0f2f5 url(~@/assets/login_background.jpg) no-repeat 50%;
       background-size: 100%;
       padding: 110px 0 144px;
       position: relative;
@@ -75,8 +86,8 @@
       }
 
       .top {
-        text-align: center;
-
+        text-align: left;
+        margin: 70px 120px;
         .header {
           height: 44px;
           line-height: 44px;
@@ -92,9 +103,9 @@
           }
 
           .logo {
-            height: 44px;
+            height: 70px;
             vertical-align: top;
-            margin-right: 16px;
+            margin: -10px 10px;
             border-style: none;
           }
 
@@ -108,17 +119,22 @@
           }
         }
         .desc {
-          font-size: 14px;
+          font-size: 16px;
           color: rgba(0, 0, 0, 0.45);
-          margin-top: 12px;
-          margin-bottom: 40px;
+          margin: 5px 0px 30px 100px;
         }
       }
 
       .main {
         min-width: 260px;
         width: 368px;
-        margin: 0 auto;
+        margin: 10px 150px;
+        border-radius: 15px;
+        background-clip: padding-box;
+        padding: 35px 35px 15px 35px;
+        background: #fefefe;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 0 25px #cac6c6;
       }
 
       .footer {
@@ -146,5 +162,11 @@
         }
       }
     }
+  }
+
+  #particles-js{
+   width: 100%;
+   height: calc(100% - 110px);
+    position: absolute;  
   }
 </style>

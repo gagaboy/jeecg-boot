@@ -1,9 +1,9 @@
 <template>
   <div class="main">
     <a-form-model ref="form" :model="model" :rules="validatorRules" class="user-layout-login">
-      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"  @change="handleTabClick">
+      <!-- <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"  @change="handleTabClick">
 
-        <a-tab-pane key="tab1" tab="账号密码登录">
+        <a-tab-pane key="tab1" tab="账号密码登录"> -->
           <a-form-model-item required prop="username">
             <a-input v-model="model.username" size="large" placeholder="请输入帐户名 / admin">
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
@@ -27,7 +27,7 @@
               <img v-else style="margin-top: 2px;" src="../../assets/checkcode.png" @click="handleChangeCheckCode"/>
             </a-col>
           </a-row>
-        </a-tab-pane>
+        <!-- </a-tab-pane> -->
 
         <!-- <a-tab-pane key="tab2" tab="手机号登录">
           <a-form-model-item required prop="mobile">
@@ -54,7 +54,7 @@
           </a-row>
         </a-tab-pane> -->
 
-      </a-tabs>
+      <!-- </a-tabs> -->
 
       <!-- <a-form-model-item>
         <a-checkbox @change="handleRememberMeChange" default-checked>自动登录</a-checkbox>
