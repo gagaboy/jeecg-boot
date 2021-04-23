@@ -5,26 +5,42 @@
 
         <a-tab-pane key="tab1" tab="账号密码登录"> -->
           <a-form-model-item required prop="username">
-            <a-input v-model="model.username" size="large" placeholder="请输入帐户名 / admin">
-              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
+            <a-row :gutter="0">
+              <a-col :span="3">
+                <a-icon type="user" :class="['input-transform',{'input-focus':inputFous == 'username'}]" :style="{color: 'rgba(255,255,255,.3)', fontSize:'16px' }"/>
+              </a-col>
+              <a-col :span="21">
+                <a-input v-model="model.username" :class="['input-transform',{'input-focus':inputFous == 'username'}]" placeholder="帐户名" @focus="inputFous = 'username'"></a-input>
+              </a-col>
+            </a-row>
           </a-form-model-item>
+
           <a-form-model-item required prop="password">
-            <a-input v-model="model.password" size="large" type="password" autocomplete="false" placeholder="请输入密码 / 123456">
-              <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
+            <a-row :gutter="0">
+              <a-col :span="3">
+                <a-icon type="lock" :class="['input-transform',{'input-focus':inputFous == 'password'}]" :style="{ color: 'rgba(255,255,255,.3)', fontSize:'16px'}"/>
+              </a-col>
+              <a-col :span="21">
+                <a-input v-model="model.password" :class="['input-transform',{'input-focus':inputFous == 'password'}]" type="password" autocomplete="false" placeholder="密码"  @focus="inputFous = 'password'"></a-input>
+              </a-col>
+            </a-row>
           </a-form-model-item>
+        
           <a-row :gutter="0">
-            <a-col :span="16">
+            <a-col :span="13">
               <a-form-model-item required prop="inputCode">
-                <a-input v-model="model.inputCode" size="large" type="text" placeholder="请输入验证码">
-                  <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-                </a-input>
+                <a-row :gutter="0">
+                  <a-col :span="5">
+                    <a-icon type="safety" :class="['input-transform',{'input-focus':inputFous == 'safety'}]"  :style="{ color: 'rgba(255,255,255,.3)', fontSize:'16px'}"/></a-col>
+                  <a-col :span="19">
+                    <a-input :class="['input-transform',{'input-focus':inputFous == 'safety'}]"  v-model="model.inputCode" placeholder="验证码" @focus="inputFous = 'safety'"></a-input>
+                  </a-col>
+                </a-row>
               </a-form-model-item>
             </a-col>
-            <a-col :span="8" style="text-align: right">
-              <img v-if="requestCodeSuccess" style="margin-top: 2px;" :src="randCodeImage" @click="handleChangeCheckCode"/>
-              <img v-else style="margin-top: 2px;" src="../../assets/checkcode.png" @click="handleChangeCheckCode"/>
+            <a-col :span="11" style="text-align: right">
+              <img v-if="requestCodeSuccess" style="margin-top: 4px;height:30px" :src="randCodeImage" @click="handleChangeCheckCode"/>
+              <img v-else style="margin-top: 4px;height:30px" src="../../assets/checkcode.png" @click="handleChangeCheckCode"/>
             </a-col>
           </a-row>
         <!-- </a-tab-pane> -->
@@ -67,7 +83,10 @@
       </a-form-model-item> -->
 
       <a-form-item style="margin-top:24px">
-        <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn" @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定</a-button>
+        <!--  -->
+        <div class='bottom'>
+            <a-button size="large" type="primary" htmlType="submit" class="loginBtn" :loading="loginBtn" @click.stop.prevent="handleSubmit" :disabled="loginBtn">登录</a-button>
+        </div>
       </a-form-item>
 
     </a-form-model>
@@ -97,6 +116,7 @@
     },
     data () {
       return {
+        inputFous:'',
         model: {
           username:'',
           password:'',
@@ -237,7 +257,7 @@
               captcha: this.model.inputCode,
               checkKey: this.currdatetime
             }
-            console.log("登录参数", loginParams)
+            // console.log("登录参数", loginParams)
             this.Login(loginParams).then((res) => {
               this.$refs.loginSelect.show(res.result)
             }).catch((err) => {
@@ -277,8 +297,9 @@
           description: description,
           duration: 4,
         });
-        //密码错误后更新验证码
-        if(description.indexOf('密码错误')>0){
+
+        //密码错误后或者验证码错误/失效都更新验证码
+        if(description.indexOf('密码错误')>0 || description.indexOf('验证码错误') == 0){
           this.handleChangeCheckCode();
         }
         this.loginBtn = false;
@@ -375,17 +396,81 @@
   }
 </script>
 <style lang="less" scoped>
+  .input-focus {
+    transform: translateX(-8px);
+    color:white !important
+  }
+  .input-transform{
+    transition: all .2s;
+  }
+  
+  .ant-input{
+      color:#61BFFF;
+      border:none;
+      font-size: 14px;
+      border-bottom: 1px solid #61BFFF;
+      outline: none;
+      box-shadow: none;
+      background: transparent;
+      border-radius: 0px;
+  }
+
+  /*更改谷歌浏览器input背景*/
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    /*延迟背景颜色载入*/
+    -webkit-transition-delay: 99999s;
+    -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
+  }
+
   .user-layout-login {
     label {
       font-size: 14px;
     }
-  .getCaptcha {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 90px 40px 40px 40px;
+    backface-visibility: hidden;
+    background: linear-gradient(230deg, rgba(53, 57, 74, 0) 0%, rgb(0, 0, 0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(53, 57, 74, 0)', endColorstr='rgb(0, 0, 0)',GradientType=1 );
+    box-shadow: -15px 15px 15px rgba(0,0,0,.4);
+    transition: all 1s;
+
+    .loginBtn{
+      padding: 10px 50px;
+      border: 2px solid #4FA1D9;
+      border-radius: 50px;
+      background: transparent;
+      font-size: 14px;
+      color: #4FA1D9;
+      transition: all .2s;
+      margin: 0 auto;
+    }
+
+    .bottom{
+      display: flex;
+      height: 42px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .loginBtn:hover{
+      color: white;
+      background: #4FA1D9;
+      cursor: pointer;
+    }
+
+    .getCaptcha {
       display: block;
       width: 100%;
       height: 40px;
     }
 
-  .forge-password {
+    .forge-password {
       font-size: 14px;
     }
 
@@ -396,29 +481,30 @@
       width: 100%;
     }
 
-  .user-login-other {
-      text-align: left;
-      margin-top: 24px;
-      line-height: 22px;
+    .user-login-other {
+        text-align: left;
+        margin-top: 24px;
+        line-height: 22px;
 
-    .item-icon {
-        font-size: 24px;
-        color: rgba(0,0,0,.2);
-        margin-left: 16px;
-        vertical-align: middle;
-        cursor: pointer;
-        transition: color .3s;
+      .item-icon {
+          font-size: 24px;
+          color: rgba(0,0,0,.2);
+          margin-left: 16px;
+          vertical-align: middle;
+          cursor: pointer;
+          transition: color .3s;
 
-      &:hover {
-          color: #1890ff;
+        &:hover {
+            color: #1890ff;
+          }
+        }
+
+      .register {
+          float: right;
         }
       }
-
-    .register {
-        float: right;
-      }
-    }
   }
+
 </style>
 <style>
   .valid-error .ant-select-selection__placeholder{

@@ -1,4 +1,4 @@
-<template>
+// <template>
   <div id="userLayout" :class="['user-layout-wrapper', device]">
     <div class="container">
       <vue-particles
@@ -16,7 +16,7 @@
         :hoverEffect="true"
         hoverMode="grab"
         :clickEffect="true"
-        clickMode="push"
+        clickMode="repulse"
       ></vue-particles>
       <div class="top">
         <div class="header">
@@ -132,9 +132,6 @@
         border-radius: 15px;
         background-clip: padding-box;
         padding: 35px 35px 15px 35px;
-        background: #fefefe;
-        border: 1px solid #eaeaea;
-        box-shadow: 0 0 25px #cac6c6;
       }
 
       .footer {
