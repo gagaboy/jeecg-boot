@@ -42,7 +42,7 @@ public class SysAreaController {
 
     @ApiOperation(value = "获取地区信息", notes = "获取地区信息")
     @GetMapping("/list")
-    public Result ListProvinceAndCity() {
+    public Result listProvinceAndCity() {
         return Result.OK(sysAreaService.listAreaCascade());
     }
 }
