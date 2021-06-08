@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinaunicom.entinfo.mapper.EntInfoMapper">
+
+    <select id="pageList" resultType="com.chinaunicom.entinfo.vo.EntInfoVO">
+        SELECT ei.*, sa1.name as provinceName, sa2.name as cityName
+        FROM ent_info ei
+        LEFT JOIN sys_area sa1
+        ON ei.province = sa1.id
+        LEFT JOIN sys_area sa2
+        ON ei.city = sa2.id
+        <where>
+            <if test="entInfo.entName != null and entInfo.entName != ''">
+                AND ei.ent_name like CONCAT("%", #{entInfo.entName},"%")
+            </if>
+            <if test="entInfo.industry != null and entInfo.industry != ''">
+                AND ei.industry = #{entInfo.industry}
+            </if>
+            <if test="entInfo.status != null">
+                AND ei.status = #{entInfo.status}
+            </if>
+        </where>
+        ORDER BY ei.update_time DESC
+    </select>
+</mapper>

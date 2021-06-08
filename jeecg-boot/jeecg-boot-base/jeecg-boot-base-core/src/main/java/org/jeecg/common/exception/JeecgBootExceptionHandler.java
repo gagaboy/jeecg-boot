@@ -7,17 +7,24 @@ import org.jeecg.common.api.vo.Result;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.connection.PoolException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 /**
  * 异常处理器
- * 
+ *
  * @Author scott
  * @Date 2019
  */
@@ -57,7 +64,7 @@ public class JeecgBootExceptionHandler {
 		log.error(e.getMessage(), e);
 		return Result.error("操作失败，"+e.getMessage());
 	}
-	
+
 	/**
 	 * @Author 政辉
 	 * @param e
@@ -81,9 +88,9 @@ public class JeecgBootExceptionHandler {
 		//return Result.error("没有权限，请联系管理员授权");
 		return Result.error(405,sb.toString());
 	}
-	
-	 /** 
-	  * spring默认上传大小100MB 超出大小捕获异常MaxUploadSizeExceededException 
+
+	 /**
+	  * spring默认上传大小100MB 超出大小捕获异常MaxUploadSizeExceededException
 	  */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public Result<?> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
@@ -102,5 +109,22 @@ public class JeecgBootExceptionHandler {
     	log.error(e.getMessage(), e);
         return Result.error("Redis 连接异常!");
     }
+
+	@ExceptionHandler(value = MethodArgumentNotValidException.class)
+	public Result exceptionHandler(MethodArgumentNotValidException e) {
+		log.error("参数验证异常", e);
+		// 获取异常信息
+		BindingResult exceptions = e.getBindingResult();
+		// 判断异常中是否有错误信息，如果存在就使用异常中的消息，否则使用默认消息
+		if (exceptions.hasErrors()) {
+			List<ObjectError> errors = exceptions.getAllErrors();
+			if (!errors.isEmpty()) {
+				// 这里列出了全部错误参数，按正常逻辑，只需要第一条错误即可
+				FieldError fieldError = (FieldError) errors.get(0);
+				return Result.error(fieldError.getDefaultMessage());
+			}
+		}
+		return Result.error("参数校验错误");
+	}
 
 }
