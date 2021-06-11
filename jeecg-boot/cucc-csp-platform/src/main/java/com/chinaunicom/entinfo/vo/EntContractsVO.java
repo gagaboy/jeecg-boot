@@ -3,6 +3,7 @@ package com.chinaunicom.entinfo.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -54,9 +55,8 @@ public class EntContractsVO {
     private Integer status;
 
     @Size(min = 1, message = "未上传合同附件")
+    @ApiModelProperty(value = "合同附件URL")
     private List<String> contractsUrlList;
-
-    private List contractsUrlObjectList;
 
     /**
      * 便于前端编辑
@@ -64,13 +64,13 @@ public class EntContractsVO {
      * @return
      */
     public List getContractsUrlObjectList() {
-        if (contractsUrlList == null || contractsUrlList.size() <= 0) {
+        if (CollectionUtils.isEmpty(contractsUrlList)) {
             return new ArrayList();
         } else {
             List tempList = new ArrayList(contractsUrlList.size());
             contractsUrlList.forEach(contractsUrl -> {
                 if (contractsUrl != null) {
-                    Map tempMap = new HashMap();
+                    Map tempMap = new HashMap(4);
                     tempMap.put("uid", UUID.randomUUID().toString());
                     tempMap.put("name", contractsUrl.substring(contractsUrl.lastIndexOf("/") + 1));
                     tempMap.put("status", "done");
