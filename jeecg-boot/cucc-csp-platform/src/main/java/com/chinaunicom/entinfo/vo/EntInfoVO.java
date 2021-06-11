@@ -85,6 +85,9 @@ public class EntInfoVO {
     @ApiModelProperty(value = "营业执照url")
     private String bizLicUrl;
 
+    @ApiModelProperty(value = "行业名称")
+    private String industryName;
+
     @ApiModelProperty(value = "省份名称")
     private String provinceName;
 

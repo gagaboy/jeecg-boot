@@ -3,8 +3,10 @@
 <mapper namespace="com.chinaunicom.entinfo.mapper.EntInfoMapper">
 
     <select id="pageList" resultType="com.chinaunicom.entinfo.vo.EntInfoVO">
-        SELECT ei.*, sa1.name as provinceName, sa2.name as cityName
+        SELECT ei.*, ni.name as industryName, sa1.name as provinceName, sa2.name as cityName
         FROM ent_info ei
+        LEFT JOIN norm_industry ni
+        ON ei.industry = ni.code
         LEFT JOIN sys_area sa1
         ON ei.province = sa1.id
         LEFT JOIN sys_area sa2

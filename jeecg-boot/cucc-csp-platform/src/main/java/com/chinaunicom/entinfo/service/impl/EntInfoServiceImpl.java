@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chinaunicom.common.constant.StatusConstant;
+import com.chinaunicom.common.entity.NormIndustry;
 import com.chinaunicom.common.entity.SysArea;
+import com.chinaunicom.common.service.INormIndustryService;
 import com.chinaunicom.common.service.ISysAreaService;
 import com.chinaunicom.common.util.StringUtil;
 import com.chinaunicom.entinfo.entity.EntAttachments;
@@ -56,6 +58,9 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
 
     @Autowired
     private ISysAreaService sysAreaService;
+
+    @Autowired
+    private INormIndustryService normIndustryService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -125,10 +130,12 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
                     List<String> contractsUrlList = contracts.getContractsUrlList();
                     if (!CollectionUtils.isEmpty(contractsUrlList)) {
                         contractsUrlList.forEach(contractsUrl -> {
-                            EntAttachments entAttachments =
-                                    assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
-                                            entContracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
-                            entAttachmentsList.add(entAttachments);
+                            if (!StringUtils.isEmpty(contractsUrl)) {
+                                EntAttachments entAttachments =
+                                        assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
+                                                entContracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
+                                entAttachmentsList.add(entAttachments);
+                            }
                         });
                     }
                 });
@@ -199,9 +206,11 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
             newContractAttachmentList.removeAll(tempContractAttachmentList);
             if (newContractAttachmentList.size() > 0) {
                 newContractAttachmentList.forEach(contractsUrl -> {
-                    EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
-                            contracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
-                    newAttachmentsList.add(entAttachments);
+                    if (!StringUtils.isEmpty(contractsUrl)) {
+                        EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
+                                contracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
+                        newAttachmentsList.add(entAttachments);
+                    }
                 });
             }
         } else {
@@ -223,9 +232,11 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
                     .eq(EntAttachments::getSourceId, contracts.getId()).update();
             Assert.isTrue(updateResult, "更新合同附件失败");
             contractsVO.getContractsUrlList().forEach(contractsUrl -> {
-                EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
-                        entContracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
-                newAttachmentsList.add(entAttachments);
+                if (!StringUtils.isEmpty(contractsUrl)) {
+                    EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
+                            entContracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
+                    newAttachmentsList.add(entAttachments);
+                }
             });
         }
     }
@@ -387,6 +398,10 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         SysArea city = sysAreaService.lambdaQuery().eq(SysArea::getId, entInfo.getCity()).one();
         if (city != null) {
             entInfoVO.setCityName(city.getName());
+        }
+        NormIndustry normIndustry = normIndustryService.lambdaQuery().eq(NormIndustry::getCode, entInfo.getIndustry()).one();
+        if (normIndustry != null) {
+            entInfoVO.setIndustryName(normIndustry.getName());
         }
 
         return entInfoVO;

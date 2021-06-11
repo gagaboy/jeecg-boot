@@ -7,8 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author 木头人
@@ -56,4 +55,30 @@ public class EntContractsVO {
 
     @Size(min = 1, message = "未上传合同附件")
     private List<String> contractsUrlList;
+
+    private List contractsUrlObjectList;
+
+    /**
+     * 便于前端编辑
+     *
+     * @return
+     */
+    public List getContractsUrlObjectList() {
+        if (contractsUrlList == null || contractsUrlList.size() <= 0) {
+            return new ArrayList();
+        } else {
+            List tempList = new ArrayList(contractsUrlList.size());
+            contractsUrlList.forEach(contractsUrl -> {
+                if (contractsUrl != null) {
+                    Map tempMap = new HashMap();
+                    tempMap.put("uid", UUID.randomUUID().toString());
+                    tempMap.put("name", contractsUrl.substring(contractsUrl.lastIndexOf("/") + 1));
+                    tempMap.put("status", "done");
+                    tempMap.put("url", contractsUrl);
+                    tempList.add(tempMap);
+                }
+            });
+            return tempList;
+        }
+    }
 }
