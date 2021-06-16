@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.chinaunicom.entinfo.mapper.EntInfoMapper">
+<mapper namespace="com.chinaunicom.business.entinfo.mapper.EntInfoMapper">
 
-    <select id="pageList" resultType="com.chinaunicom.entinfo.vo.EntInfoVO">
+    <select id="pageList" resultType="com.chinaunicom.business.entinfo.vo.EntInfoVO">
         SELECT ei.*, ni.name as industryName, sa1.name as provinceName, sa2.name as cityName
         FROM ent_info ei
         LEFT JOIN norm_industry ni
