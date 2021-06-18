@@ -29,13 +29,20 @@
               <a-form-model-item label="企业LOGO">
                 <img v-if="form.logoUrl" :src="form.logoUrl" alt="avatar" style="width: 128px; height: 128px" />
               </a-form-model-item>
-              <a-form-model-item label="企业营业执照">
-                <img v-if="form.bizLicUrl" :src="form.bizLicUrl" alt="avatar" style="width: 128px; height: 128px" />
-              </a-form-model-item>
             </a-col>
             <a-col :span="12">
               <a-form-model-item label="企业简称" prop="abbrName">
                 <a-input placeholder="请输入企业简称" v-model="form.abbrName" disabled />
+              </a-form-model-item>
+              <a-form-model-item label="企业编码" prop="entCode">
+                <a-input placeholder="请输入企业编码" v-model="form.entCode" disabled />
+              </a-form-model-item>
+              <a-form-model-item label="企业等级" prop="entGrade">
+                <a-radio-group v-model="form.entGrade" disabled>
+                  <a-radio :value="item.value" v-for="(item, index) in entGradeList" :key="index">
+                    {{ item.name }}
+                  </a-radio>
+                </a-radio-group>
               </a-form-model-item>
               <a-form-model-item label="所属行业" prop="industryList">
                 <a-cascader
@@ -47,42 +54,51 @@
                   disabled
                 />
               </a-form-model-item>
-
-              <a-form-model
-                ref="ruleFormLegal"
-                :model="formLegal"
-                :rules="rules"
-                :label-col="labelCol"
-                :wrapper-col="wrapperCol"
-              >
-                <a-form-model-item label="企业法人姓名" prop="name">
-                  <a-input v-model="formLegal.name" placeholder="请输入企业法人姓名" disabled />
-                </a-form-model-item>
-
-                <a-form-model-item label="法人身份证号" prop="idCard">
-                  <a-input v-model="formLegal.idCard" placeholder="请输入法人身份证号" disabled />
-                </a-form-model-item>
-                <a-form-model-item label="身份证正面">
-                  <img
-                    v-if="formLegal.idCardFrontUrl"
-                    :src="formLegal.idCardFrontUrl"
-                    alt="avatar"
-                    style="width: 128px; height: 128px"
-                  />
-                </a-form-model-item>
-
-                <a-form-model-item label="身份证反面">
-                  <img
-                    v-if="formLegal.idCardBackUrl"
-                    :src="formLegal.idCardBackUrl"
-                    alt="avatar"
-                    style="width: 128px; height: 128px"
-                  />
-                </a-form-model-item>
-              </a-form-model>
+              <a-form-model-item label="企业营业执照">
+                <img v-if="form.bizLicUrl" :src="form.bizLicUrl" alt="avatar" style="width: 128px; height: 128px" />
+              </a-form-model-item>
             </a-col>
           </a-row>
         </div>
+      </a-form-model>
+    </a-card>
+    <a-card size="small" title="企业法人信息" style="width: 100%; margin-top: 20px">
+      <a-form-model
+        ref="ruleFormLegal"
+        :model="formLegal"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-row class="form-row" :gutter="16">
+          <a-col :span="12">
+            <a-form-model-item label="企业法人姓名" prop="name">
+              <a-input v-model="formLegal.name" placeholder="请输入企业法人姓名" disabled />
+            </a-form-model-item>
+            <a-form-model-item label="身份证正面">
+              <img
+                v-if="formLegal.idCardFrontUrl"
+                :src="formLegal.idCardFrontUrl"
+                alt="avatar"
+                style="width: 128px; height: 128px"
+              />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-model-item label="法人身份证号" prop="idCard" disabled>
+              <a-input v-model="formLegal.idCard" placeholder="请输入法人身份证号" />
+            </a-form-model-item>
+
+            <a-form-model-item label="身份证反面">
+              <img
+                v-if="formLegal.idCardBackUrl"
+                :src="formLegal.idCardBackUrl"
+                alt="avatar"
+                style="width: 128px; height: 128px"
+              />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
       </a-form-model>
     </a-card>
     <a-card size="small" title="企业联系人信息" style="width: 100%; margin-top: 20px">
@@ -318,6 +334,12 @@ export default {
       contactIdBackUrl: '',
       nodes: [],
       contractList: [],
+      entGradeList: [
+        { value: '0', name: '金牌级' },
+        { value: '1', name: '银牌级' },
+        { value: '2', name: '铜牌级' },
+        { value: '3', name: '标准级' },
+      ],
     }
   },
   created() {

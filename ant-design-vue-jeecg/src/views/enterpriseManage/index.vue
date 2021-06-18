@@ -1,27 +1,16 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
-            <a-form-item label="企业名称">
-              <a-input v-model="queryParam.entName" placeholder="请输入企业名称" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="所属行业">
-              <a-cascader
-                v-model="industryList"
-                :field-names="{ label: 'name', value: 'id', children: 'children' }"
-                :options="industryOptions"
-                placeholder="请选择所属行业"
-                @change="industryChange"
-              />
-            </a-form-item>
-          </a-col>
-          <template v-if="advanced">
+    <div v-show="listShow">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="所属行业">
+              <a-form-item label="企业名称">
+                <a-input v-model="queryParam.entName" placeholder="请输入企业名称" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <!-- <a-form-item label="所属行业">
                 <a-cascader
                   v-model="industryList"
                   :field-names="{ label: 'name', value: 'id', children: 'children' }"
@@ -29,68 +18,99 @@
                   placeholder="请选择所属行业"
                   @change="industryChange"
                 />
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="8" :sm="24">
-              <a-form-item label="企业状态">
-                <a-select placeholder="请选择" v-model="queryParam.status">
-                  <a-select-option :value="0">启用</a-select-option>
-                  <a-select-option :value="1">禁用</a-select-option>
+              </a-form-item> -->
+              <a-form-item label="客户等级">
+                <a-select placeholder="请选择" v-model="queryParam.authentication">
+                  <a-select-option :value="item.value" v-for="(item, index) in entGradeList" :key="index">{{
+                    item.name
+                  }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
-          </template>
-          <a-col :md="(!advanced && 8) || 24" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary" @click="getentInfoList(1)">查询</a-button>
-              <a-button style="margin-left: 8px" @click="resetSearchForm">重置</a-button>
-              <a @click="toggleAdvanced" style="margin-left: 8px">
-                {{ advanced ? '收起' : '展开' }}
-                <a-icon :type="advanced ? 'up' : 'down'" />
-              </a>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="认证情况">
+                  <a-select
+                    placeholder="请选择"
+                    mode="multiple"
+                    v-model="queryParam.authentication"
+                    @change="authenticationChange"
+                  >
+                    <a-select-option value="CUCC">中国联通</a-select-option>
+                    <a-select-option value="CMCC">中国移动</a-select-option>
+                    <a-select-option value="CTCC">中国电信</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
 
-    <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showDrawer">新建</a-button>
-    </div>
-    <a-table
-      :columns="columns"
-      :data-source="data"
-      :rowKey="(record) => record.id"
-      :pagination="page"
-      @change="pageChange"
-      table-layout="fixed"
-    >
-      <span slot="action" slot-scope="row">
-        <a @click="showEditVisible(row.id)">编辑</a>
-        <a-divider type="vertical" />
-        <a @click="showModal(row.id)">查看</a>
-        <a-divider type="vertical" />
-        <a-popconfirm :title="`确认${Number(row.status) === 0 ? '禁用' : '启用'}该客户？`" @confirm="statusChange(row)">
-          <a-icon
-            slot="icon"
-            type="question-circle"
-            :style="{ color: Number(row.status) === 1 ? '#ff7875' : '#1890FF' }"
-          />
-          <a-button type="link" :style="{ color: Number(row.status) === 0 ? '#ff7875' : '#1890FF' }" size="small">{{
-            Number(row.status) == 0 ? '禁用' : '启用'
-          }}</a-button>
-        </a-popconfirm>
-        <!-- 
+              <a-col :md="8" :sm="24">
+                <a-form-item label="企业状态">
+                  <a-select placeholder="请选择" v-model="queryParam.status">
+                    <a-select-option :value="0">启用</a-select-option>
+                    <a-select-option :value="1">禁用</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary" @click="getentInfoList(1)">查询</a-button>
+                <a-button style="margin-left: 8px" @click="resetSearchForm">重置</a-button>
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? '收起' : '展开' }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="showDrawer">新建</a-button>
+      </div>
+      <a-table
+        :columns="columns"
+        :data-source="data"
+        :rowKey="(record) => record.id"
+        :pagination="page"
+        @change="pageChange"
+        table-layout="fixed"
+      >
+        <a slot="logoUrl" slot-scope="row">
+          <img :src="row" alt="" style="width: 80px; height: 80px" />
+        </a>
+        <span slot="action" slot-scope="row">
+          <a @click="showEditVisible(row.id)">编辑</a>
+          <a-divider type="vertical" />
+          <a @click="showModal(row.id)">查看</a>
+          <a-divider type="vertical" />
+          <a>认证</a>
+          <a-divider type="vertical" />
+          <a-popconfirm
+            :title="`确认${Number(row.status) === 0 ? '禁用' : '启用'}该客户？`"
+            @confirm="statusChange(row)"
+          >
+            <a-icon
+              slot="icon"
+              type="question-circle"
+              :style="{ color: Number(row.status) === 1 ? '#ff7875' : '#1890FF' }"
+            />
+            <a-button type="link" :style="{ color: Number(row.status) === 0 ? '#ff7875' : '#1890FF' }" size="small">{{
+              Number(row.status) == 0 ? '禁用' : '启用'
+            }}</a-button>
+          </a-popconfirm>
+          <!-- 
         <a-divider type="vertical" />
         <a @click="showDeleteConfirm">删除</a> -->
-        <!-- <a-divider type="vertical" />
+          <!-- <a-divider type="vertical" />
         <a class="ant-dropdown-link"> 更多<a-icon type="down" /> </a> -->
-      </span>
-    </a-table>
+        </span>
+      </a-table>
+    </div>
+
     <!-- 编辑抽屉 -->
     <div>
       <a-drawer
@@ -118,20 +138,13 @@
           <a-button :style="{ marginRight: '8px' }" @click="onClose"> 关闭 </a-button>
         </div>
       </a-drawer>
-      <a-drawer
-        title="编辑企业信息"
-        :width="1000"
-        :visible="editVisible"
-        :body-style="{ paddingBottom: '80px' }"
-        @close="onClose"
-      >
+      <div v-if="editShow">
         <edit-info :editItem="editItem" @changeEditVisible="addOnClose"></edit-info>
-
         <div
           :style="{
             position: 'absolute',
             right: 0,
-            bottom: 0,
+            bottom: -53,
             width: '100%',
             borderTop: '1px solid #e9e9e9',
             padding: '10px 16px',
@@ -140,9 +153,20 @@
             zIndex: 1,
           }"
         >
-          <a-button :style="{ marginRight: '8px' }" @click="onClose"> 关闭 </a-button>
+          <a-button :style="{ marginRight: '8px' }" @click="onClose"> 返回 </a-button>
         </div>
-      </a-drawer>
+      </div>
+      <!-- <a-drawer
+        title="编辑企业信息"
+        :width="1000"
+        :visible="editVisible"
+        :body-style="{ paddingBottom: '80px' }"
+        @close="onClose"
+      >
+        <edit-info :editItem="editItem" @changeEditVisible="addOnClose"></edit-info>
+
+        
+      </a-drawer> -->
       <a-modal v-model="lookvisible" title="企业信息" width="1000px" @ok="handleOk">
         <look-info :editItem="editItem"></look-info>
       </a-modal>
@@ -157,6 +181,12 @@ import lookInfo from './lookInfo'
 import { entInfoList, updateStatus, entInfoId, industryList, areaList } from '@/api/api.js'
 const columns = [
   {
+    title: '企业LOGO',
+    dataIndex: 'logoUrl',
+    key: 'logoUrl',
+    scopedSlots: { customRender: 'logoUrl' },
+  },
+  {
     title: '企业全称',
     dataIndex: 'entName',
     key: 'entName',
@@ -167,40 +197,29 @@ const columns = [
     key: 'abbrName',
   },
   {
-    title: '所属行业',
-    dataIndex: 'industryName',
-    key: 'index',
+    title: '企业编码',
+    dataIndex: 'entCode',
+    key: 'entCode',
   },
   {
-    title: '企业电话',
-    dataIndex: 'entPhone',
-    key: 'industry',
+    title: '客户等级',
+    dataIndex: 'entGrade',
+    key: 'entGrade',
   },
   {
-    title: '企业地址',
-    key: 'address',
-    dataIndex: 'address',
+    title: '认证情况',
+    key: 'status',
+    dataIndex: 'status',
   },
   {
-    title: '创建人',
+    title: '状态',
     key: 'createBy',
     dataIndex: 'createBy',
   },
-  {
-    title: '创建时间',
-    key: 'createTime',
-    ellipsis: true,
-    dataIndex: 'createTime',
-  },
-  {
-    title: '更新时间',
-    key: 'updateTime',
-    ellipsis: true,
-    dataIndex: 'updateTime',
-  },
+
   {
     title: '操作',
-    width: '180px',
+    width: '220px',
     key: 'action',
     scopedSlots: { customRender: 'action' },
   },
@@ -249,6 +268,15 @@ export default {
       },
       editVisible: false,
       editItem: {},
+      listShow: true,
+      editShow: false,
+      entGradeList: [
+        { value: '0', name: '金牌级' },
+        { value: '1', name: '银牌级' },
+        { value: '2', name: '铜牌级' },
+        { value: '3', name: '标准级' },
+      ],
+      authenticationList: [],
     }
   },
   created() {
@@ -310,16 +338,19 @@ export default {
       })
     },
     showDrawer() {
-      this.visible = true
+      // this.visible = true
+      this.$router.push('/enterpriseInfo')
     },
     onClose() {
-      this.visible = false
-      this.editVisible = false
+      this.editShow = false
+      this.listShow = true
     },
     addOnClose() {
       this.getentInfoList()
       this.visible = false
       this.editVisible = false
+      this.editShow = false
+      this.listShow = true
     },
     // 搜索重置
     resetSearchForm() {
@@ -356,8 +387,13 @@ export default {
     showEditVisible(entId) {
       entInfoId({ entId: entId }).then((res) => {
         this.editItem = res
-        this.editVisible = true
+        this.editShow = true
+        this.listShow = false
       })
+    },
+    authenticationChange(v) {
+      console.log(v)
+      console.log(this.queryParam.authentication)
     },
   },
 }

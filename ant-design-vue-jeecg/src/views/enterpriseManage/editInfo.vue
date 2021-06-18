@@ -74,6 +74,9 @@
             <a-form-model-item label="企业简称" prop="abbrName">
               <a-input placeholder="请输入企业简称" v-model="form.abbrName" />
             </a-form-model-item>
+            <a-form-model-item label="企业编码" prop="entCode">
+              <a-input placeholder="请输入企业编码" v-model="form.entCode" />
+            </a-form-model-item>
             <a-form-model-item label="所属行业" prop="industryList">
               <a-cascader
                 v-model="form.industryList"
@@ -83,76 +86,13 @@
                 @change="industryChange"
               />
             </a-form-model-item>
-
-            <a-form-model
-              ref="ruleFormLegal"
-              :model="formLegal"
-              :rules="rules"
-              :label-col="labelCol"
-              :wrapper-col="wrapperCol"
-            >
-              <a-form-model-item label="企业法人姓名" prop="name">
-                <a-input v-model="formLegal.name" placeholder="请输入企业法人姓名" />
-              </a-form-model-item>
-
-              <a-form-model-item label="法人身份证号" prop="idCard">
-                <a-input v-model="formLegal.idCard" placeholder="请输入法人身份证号" />
-              </a-form-model-item>
-              <a-form-model-item label="身份证正面">
-                <a-upload
-                  name="file"
-                  list-type="picture-card"
-                  class="avatar-uploader"
-                  accept=".jpg,.png"
-                  :show-upload-list="false"
-                  :before-upload="before"
-                  :action="uploadUrl"
-                  @change="(e) => handleChange(e, 'idCardFront')"
-                  :headers="{
-                    'X-Access-Token': token,
-                  }"
-                  :data="biz"
-                >
-                  <img
-                    v-if="formLegal.idCardFrontUrl"
-                    :src="formLegal.idCardFrontUrl"
-                    alt="avatar"
-                    style="width: 128px; height: 128px"
-                  />
-                  <div v-else>
-                    <a-icon :type="loading ? 'loading' : 'plus'" />
-                    <!-- <div class="ant-upload-text">Upload</div> -->
-                  </div>
-                </a-upload>
-              </a-form-model-item>
-
-              <a-form-model-item label="身份证反面">
-                <a-upload
-                  name="file"
-                  list-type="picture-card"
-                  class="avatar-uploader"
-                  accept=".jpg,.png"
-                  :show-upload-list="false"
-                  :before-upload="before"
-                  :action="uploadUrl"
-                  @change="(e) => handleChange(e, 'idCardBack')"
-                  :headers="{
-                    'X-Access-Token': token,
-                  }"
-                  :data="biz"
-                >
-                  <img
-                    v-if="formLegal.idCardBackUrl"
-                    :src="formLegal.idCardBackUrl"
-                    alt="avatar"
-                    style="width: 128px; height: 128px"
-                  />
-                  <div v-else>
-                    <a-icon :type="loading ? 'loading' : 'plus'" />
-                  </div>
-                </a-upload>
-              </a-form-model-item>
-            </a-form-model>
+            <a-form-model-item label="企业等级" prop="abbrName">
+              <a-radio-group v-model="form.entGrade" @change="entGradeChange">
+                <a-radio :value="item.value" v-for="(item, index) in entGradeList" :key="index">
+                  {{ item.name }}
+                </a-radio>
+              </a-radio-group>
+            </a-form-model-item>
           </a-col>
         </a-row>
       </div>
@@ -240,6 +180,82 @@
         </a-row>
       </div>
     </a-form-model>
+    <div v-show="current == 2" style="margin-top: 30px">
+      <a-form-model
+        ref="ruleFormLegal"
+        :model="formLegal"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-row class="form-row" :gutter="16">
+          <a-col :span="12">
+            <a-form-model-item label="企业法人姓名" prop="name">
+              <a-input v-model="formLegal.name" placeholder="请输入企业法人姓名" />
+            </a-form-model-item>
+            <a-form-model-item label="身份证正面">
+              <a-upload
+                name="file"
+                list-type="picture-card"
+                class="avatar-uploader"
+                accept=".jpg,.png"
+                :show-upload-list="false"
+                :before-upload="beforeUpload"
+                :action="uploadUrl"
+                @change="(e) => handleChange(e, 'idCardFront')"
+                :headers="{
+                  'X-Access-Token': token,
+                }"
+                :data="biz"
+              >
+                <img
+                  v-if="formLegal.idCardFrontUrl"
+                  :src="formLegal.idCardFrontUrl"
+                  alt="avatar"
+                  style="width: 128px; height: 128px"
+                />
+                <div v-else>
+                  <a-icon :type="loading ? 'loading' : 'plus'" />
+                  <!-- <div class="ant-upload-text">Upload</div> -->
+                </div>
+              </a-upload>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-model-item label="法人身份证号" prop="idCard">
+              <a-input v-model="formLegal.idCard" placeholder="请输入法人身份证号" />
+            </a-form-model-item>
+
+            <a-form-model-item label="身份证反面">
+              <a-upload
+                name="file"
+                list-type="picture-card"
+                class="avatar-uploader"
+                accept=".jpg,.png"
+                :show-upload-list="false"
+                :before-upload="beforeUpload"
+                :action="uploadUrl"
+                @change="(e) => handleChange(e, 'idCardBack')"
+                :headers="{
+                  'X-Access-Token': token,
+                }"
+                :data="biz"
+              >
+                <img
+                  v-if="formLegal.idCardBackUrl"
+                  :src="formLegal.idCardBackUrl"
+                  alt="avatar"
+                  style="width: 128px; height: 128px"
+                />
+                <div v-else>
+                  <a-icon :type="loading ? 'loading' : 'plus'" />
+                </div>
+              </a-upload>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+      </a-form-model>
+    </div>
     <a-form-model
       ref="ruleformContract"
       :model="formContract"
@@ -247,7 +263,7 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
-      <div style="margin-top: 30px" v-show="current == 2">
+      <div style="margin-top: 30px" v-show="current == 3">
         <a-row class="form-row" :gutter="16">
           <a-col :span="12">
             <a-form-model-item label="合同编号" prop="contractCode">
@@ -294,8 +310,9 @@
     <div class="steps-action">
       <a-button v-if="current > 0" style="margin-right: 8px" @click="prev"> 上一步 </a-button>
       <a-button v-if="current == 0" type="primary" @click="onSubmit"> 下一步 </a-button>
-      <a-button v-if="current == 1" type="primary" @click="onFormPerson"> 下一步 </a-button>
-      <a-button v-if="current == 2" type="primary" @click="onFormContract"> 提交 </a-button>
+      <a-button v-if="current == 1" type="primary" @click="onSecond"> 下一步 </a-button>
+      <a-button v-if="current == 2" type="primary" @click="onFormPerson"> 下一步 </a-button>
+      <a-button v-if="current == 3" type="primary" @click="onFormContract"> 提交 </a-button>
     </div>
     <div></div>
   </div>
@@ -335,6 +352,7 @@ export default {
         industryList: [], // 所属行业
         industry: '',
         addressValue: [],
+        entGrade: '',
       },
       formPerson: {
         idCardBackUrl: '',
@@ -362,8 +380,12 @@ export default {
           content: 'First-content',
         },
         {
-          title: '企业联系人信息',
+          title: '联系人信息',
           content: 'Second-content',
+        },
+        {
+          title: '法人信息',
+          content: 'Three-content',
         },
         {
           title: '合同信息',
@@ -373,6 +395,14 @@ export default {
       rules: {
         entName: [{ required: true, message: '请输入企业全称', trigger: 'blur' }],
         abbrName: [{ required: true, message: '请输入企业简称', trigger: 'blur' }],
+        entCode: [
+          { required: true, message: '请输入企业编码', trigger: 'blur' },
+          {
+            pattern: /^[^\u4e00-\u9fa5]{0,}$/,
+            message: '请输入正确的格式',
+            trigger: 'blur',
+          },
+        ],
         addressValue: [{ required: true, message: '请选择企业地址', trigger: 'change' }],
         industryList: [{ required: true, message: '请选择所属行业', trigger: 'change' }],
         address: [
@@ -437,6 +467,12 @@ export default {
       contactIdFrontUrl: '',
       contactIdBackUrl: '',
       nodes: [],
+      entGradeList: [
+        { value: '0', name: '金牌级' },
+        { value: '1', name: '银牌级' },
+        { value: '2', name: '铜牌级' },
+        { value: '3', name: '标准级' },
+      ],
     }
   },
   created() {
@@ -513,49 +549,55 @@ export default {
       this.current--
     },
     onSubmit() {
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          if (this.form.logoUrl == '') {
-            this.$message.warning('请上传企业logo')
-          } else if (this.form.bizLicUrl == '') {
-            this.$message.warning('请上传营业执照照片')
-          } else {
-            this.$refs.ruleFormLegal.validate((valid) => {
-              if (valid) {
-                if (this.formLegal.idCardFrontUrl == '') {
-                  this.$message.warning('请上传身份证正面照片')
-                } else if (this.formLegal.idCardBackUrl == '') {
-                  this.$message.warning('请上传身份证反面照片')
-                } else {
-                  this.current++
-                }
-              } else {
-                console.log('error submit!!')
-              }
-            })
-          }
-        } else {
-          return false
-        }
-      })
+      this.current++
+      // this.$refs.ruleForm.validate((valid) => {
+      //   if (valid) {
+      //     if (this.form.logoUrl == '') {
+      //       this.$message.warning('请上传企业logo')
+      //     } else if (this.form.bizLicUrl == '') {
+      //       this.$message.warning('请上传营业执照照片')
+      //     } else {
+      //       this.$message.warning('请上传身份证反面照片')
+      //     }
+      //   } else {
+      //     return false
+      //   }
+      // })
+    },
+    onSecond() {
+      this.current++
+      // this.$refs.ruleFormLegal.validate((valid) => {
+      //   if (valid) {
+      //     if (this.formLegal.idCardFrontUrl == '') {
+      //       this.$message.warning('请上传身份证正面照片')
+      //     } else if (this.formLegal.idCardBackUrl == '') {
+      //       this.$message.warning('请上传身份证反面照片')
+      //     } else {
+      //       this.current++
+      //     }
+      //   } else {
+      //     console.log('error submit!!')
+      //   }
+      // })
     },
     onFormPerson() {
-      this.$refs.ruleformPerson.validate((valid) => {
-        if (valid) {
-          if (this.formPerson.idCardBackUrl == '') {
-            this.$message.warning('请上传身份证正面照片')
-            // this.$refs.ruleformPerson.clearValidate('contactIdFrontUrl')
-          } else if (this.formPerson.idCardFrontUrl == '') {
-            this.$message.warning('请上传身份证反面照片')
-            // this.$refs.ruleformPerson.clearValidate('contactIdBackUrl')
-          } else {
-            this.current++
-          }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.current++
+      // this.$refs.ruleformPerson.validate((valid) => {
+      //   if (valid) {
+      //     if (this.formPerson.idCardBackUrl == '') {
+      //       this.$message.warning('请上传身份证正面照片')
+      //       // this.$refs.ruleformPerson.clearValidate('contactIdFrontUrl')
+      //     } else if (this.formPerson.idCardFrontUrl == '') {
+      //       this.$message.warning('请上传身份证反面照片')
+      //       // this.$refs.ruleformPerson.clearValidate('contactIdBackUrl')
+      //     } else {
+      //       this.current++
+      //     }
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
     onFormContract() {
       this.$refs.ruleformContract.validate((valid) => {
@@ -630,6 +672,7 @@ export default {
         return isLt2M
       }
     },
+    entGradeChange() {},
   },
 }
 </script>
