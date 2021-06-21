@@ -35,6 +35,9 @@ public class EntInfo extends Model<EntInfo> {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
+    @ApiModelProperty(value = "企业编码")
+    private String entCode;
+
     @ApiModelProperty(value = "企业全称")
     private String entName;
 
@@ -89,6 +92,8 @@ public class EntInfo extends Model<EntInfo> {
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "冗余三网审核状态，便于列表查询。认证状态（1：移动，2：联通，4：电信（计算规则举例：移动联通通过：1+2=3，联通电信通过：2+4=6，三网通过：1+2+4=7）")
+    private int certStatus;
 
     @Override
     protected Serializable pkVal() {

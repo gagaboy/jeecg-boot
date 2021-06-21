@@ -1,5 +1,6 @@
 package com.chinaunicom.business.entinfo.vo;
 
+import com.chinaunicom.business.entinfo.entity.EntCertification;
 import lombok.Data;
 
 import javax.validation.Valid;

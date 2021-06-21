@@ -1,11 +1,13 @@
 package com.chinaunicom.business.entinfo.vo;
 
+import com.chinaunicom.business.entinfo.entity.EntCertification;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 木头人
@@ -18,6 +20,10 @@ public class EntInfoVO {
 
     @ApiModelProperty(value = "企业信息表主键id")
     private String id;
+
+    @NotBlank(message = "企业编码不能为空")
+    @ApiModelProperty(value = "企业编码")
+    private String entCode;
 
     @NotBlank(message = "企业全称不能为空")
     @ApiModelProperty(value = "企业全称")
@@ -93,4 +99,7 @@ public class EntInfoVO {
 
     @ApiModelProperty(value = "城市名称")
     private String cityName;
+
+    @ApiModelProperty(value = "认证情况")
+    private List<EntCertification> entCertificationList;
 }

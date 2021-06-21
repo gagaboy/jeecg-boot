@@ -2,15 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chinaunicom.business.entinfo.mapper.EntInfoMapper">
 
+<!--
     <select id="pageList" resultType="com.chinaunicom.business.entinfo.vo.EntInfoVO">
-        SELECT ei.*, ni.name as industryName, sa1.name as provinceName, sa2.name as cityName
+        SELECT ei.*, ea.local_url as logoUrl, ni.name as industryName, sa1.name as provinceName, sa2.name as cityName
         FROM ent_info ei
-        LEFT JOIN norm_industry ni
-        ON ei.industry = ni.code
-        LEFT JOIN sys_area sa1
-        ON ei.province = sa1.id
-        LEFT JOIN sys_area sa2
-        ON ei.city = sa2.id
+        INNER JOIN ent_attachments ea ON ei.id = ea.ent_id AND ea.file_type = 'ent_logo' AND ea.status = '0'
+        LEFT JOIN norm_industry ni ON ei.industry = ni.code
+        LEFT JOIN sys_area sa1 ON ei.province = sa1.id
+        LEFT JOIN sys_area sa2 ON ei.city = sa2.id
         <where>
             <if test="entInfo.entName != null and entInfo.entName != ''">
                 AND ei.ent_name like CONCAT("%", #{entInfo.entName},"%")
@@ -23,5 +22,69 @@
             </if>
         </where>
         ORDER BY ei.update_time DESC
+    </select>
+-->
+
+    <resultMap id="EntInfoMap" type="com.chinaunicom.business.entinfo.vo.EntInfoVO">
+        <id property="id" column="id"/>
+        <result property="entName" column="ent_name"/>
+        <result property="abbrName" column="abbr_name"/>
+        <result property="entCode" column="ent_code"/>
+        <result property="logoUrl" column="logo_url"/>
+        <result property="entGrade" column="ent_grade"/>
+        <result property="status" column="status"/>
+
+        <collection property="entCertificationList" ofType="com.chinaunicom.business.entinfo.entity.EntCertification" select="queryCertificationList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="pageList" resultMap="EntInfoMap">
+        SELECT ei.id, ei.ent_name, ei.abbr_name, ei.ent_code, ei.ent_grade, ei.status, ea.local_url as logo_url
+        FROM ent_info ei
+        INNER JOIN ent_attachments ea ON ei.id = ea.ent_id AND ea.file_type = 'ent_logo' AND ea.status = '0'
+        <where>
+            <if test="entInfo.entName != null and entInfo.entName != ''">
+                AND ei.ent_name like CONCAT("%", #{entInfo.entName},"%")
+            </if>
+            <if test="entInfo.entCode != null and entInfo.entCode != ''">
+                AND ei.ent_code = #{entInfo.entCode}
+            </if>
+            <if test="entInfo.entGrade != null and entInfo.entGrade != ''">
+                AND ei.ent_grade = #{entInfo.entGrade}
+            </if>
+            <if test="entInfo.status != null">
+                AND ei.status = #{entInfo.status}
+            </if>
+            <if test="entInfo.certStatus != null">
+                <choose>
+                    <when test="entInfo.certStatus == 1">
+                        AND ei.cert_status in (1,3,5,7)
+                    </when>
+                    <when test="entInfo.certStatus == 2">
+                        AND ei.cert_status in (2,3,6,7)
+                    </when>
+                    <when test="entInfo.certStatus == 3">
+                        AND ei.cert_status in (3,7)
+                    </when>
+                    <when test="entInfo.certStatus == 4">
+                        AND ei.cert_status in (4,5,6,7)
+                    </when>
+                    <when test="entInfo.certStatus == 5">
+                        AND ei.cert_status in (5,6,7)
+                    </when>
+                    <when test="entInfo.certStatus == 6">
+                        AND ei.cert_status in (6,7)
+                    </when>
+                    <when test="entInfo.certStatus == 7">
+                        AND ei.cert_status = 7
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ORDER BY ei.update_time DESC
+    </select>
+
+    <select id="queryCertificationList" resultType="com.chinaunicom.business.entinfo.entity.EntCertification">
+        select id, ent_id, operator, status from ent_certification WHERE ent_id = #{id} AND thru_time is null
     </select>
 </mapper>
