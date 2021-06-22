@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinaunicom.business.serviceregion.mapper.ServiceRegionMapper">
+
+    <select id="pageList" resultType="com.chinaunicom.business.serviceregion.vo.ServiceRegionVO">
+        SELECT sr.*, sdi1.item_text AS operatorName, sdi2.item_text AS regionName
+        FROM service_region sr
+        INNER JOIN sys_dict_item sdi1 ON sr.operator_id = sdi1.id
+        INNER JOIN sys_dict_item sdi2 ON sr.region_id = sdi2.id
+        WHERE sr.status != -1
+        <if test="srv.serviceRegionCode != null and srv.serviceRegionCode != ''">
+            AND sr.service_region_code = #{srv.serviceRegionCode}
+        </if>
+        <if test="srv.serviceRegionName != null and srv.serviceRegionName != ''">
+            AND sr.service_region_name like CONCAT("%", #{srv.serviceRegionName},"%")
+        </if>
+        <if test="srv.operatorId != null and srv.operatorId != ''">
+            AND sr.operator_id = #{srv.operatorId}
+        </if>
+        ORDER BY sr.update_time DESC
+    </select>
+</mapper>

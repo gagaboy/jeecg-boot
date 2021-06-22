@@ -48,4 +48,16 @@ public class CommonConstant {
          */
         public static final String OPERATOR_CTCC = "CTCC";
     }
+
+    public static class SysDictItemConstant {
+        /**
+         * csp 运营商
+         */
+        public static final String CSP_OPERATOR = "csp_operator";
+
+        /**
+         * csp 5g大区
+         */
+        public static final String CSP_REGION = "csp_region";
+    }
 }

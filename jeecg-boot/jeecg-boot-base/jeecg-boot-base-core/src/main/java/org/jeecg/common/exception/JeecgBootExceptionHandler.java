@@ -111,7 +111,7 @@ public class JeecgBootExceptionHandler {
     }
 
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)
-	public Result exceptionHandler(MethodArgumentNotValidException e) {
+	public Result handleArgumentException(MethodArgumentNotValidException e) {
 		log.error("参数验证异常", e);
 		// 获取异常信息
 		BindingResult exceptions = e.getBindingResult();
