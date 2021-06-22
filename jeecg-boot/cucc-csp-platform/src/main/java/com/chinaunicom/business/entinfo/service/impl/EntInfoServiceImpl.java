@@ -152,7 +152,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
     public void updateEntInfo(EntInfoDetailVO entInfoDetail) {
         //主体信息变更
         EntInfoVO entInfoVO = entInfoDetail.getEntInfo();
-        EntInfo oldEntInfo = entInfoMapper.selectById(entInfoVO.getId());
+        EntInfo oldEntInfo = entInfoMapper.selectOne(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getId, entInfoVO.getId()).ne(EntInfo::getStatus, StatusConstant.STATUS_DELETE));
         Assert.notNull(oldEntInfo, "企业不存在");
         //校验企业编码是否唯一
         int count = entInfoMapper.selectCount(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getEntCode, entInfoVO.getEntCode()).ne(EntInfo::getId, entInfoVO.getId()));
@@ -354,7 +354,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         EntInfoDetailVO entInfoDetailVO = new EntInfoDetailVO();
 
         //获取企业基本信息
-        EntInfo entInfo = entInfoMapper.selectById(entId);
+        EntInfo entInfo = entInfoMapper.selectOne(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getId, entId).ne(EntInfo::getStatus, StatusConstant.STATUS_DELETE));
         Assert.notNull(entInfo, "企业信息不存在");
 
         Map<String, List<EntAttachments>> attachmentsMap = getEntAttachmentInfo(entId);
