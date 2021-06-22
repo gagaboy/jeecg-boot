@@ -312,9 +312,26 @@
         <a-button v-if="current == 0" type="primary" @click="onSubmit"> 下一步 </a-button>
         <a-button v-if="current == 1" type="primary" @click="onFormPerson"> 下一步 </a-button>
         <a-button v-if="current == 2" type="primary" @click="onSecond"> 下一步 </a-button>
-        <a-button v-if="current == 3" type="primary" @click="onFormContract"> 提交 </a-button>
+        <!-- <a-button v-if="current == 3" type="primary" @click="onFormContract"> 提交 </a-button>  -->
       </div>
-      <div></div>
+      <div>
+        <div
+          :style="{
+            position: 'absolute',
+            right: 0,
+            bottom: '-53px',
+            width: '100%',
+            borderTop: '1px solid #e9e9e9',
+            padding: '10px 16px',
+            background: '#fff',
+            textAlign: 'right',
+            zIndex: 1,
+          }"
+        >
+          <a-button :style="{ marginRight: '8px' }" @click="keep"> 返回 </a-button>
+          <a-button :style="{ marginRight: '8px' }" @click="onFormContract"> 提交 </a-button>
+        </div>
+      </div>
     </a-card>
   </div>
 </template>
@@ -369,7 +386,7 @@ export default {
 
       loading: false,
       fileList: [],
-      current: 1,
+      current: 0,
       steps: [
         {
           title: '企业基本信息',
@@ -512,65 +529,130 @@ export default {
       this.current--
     },
     onSubmit() {
-      // this.current++
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          if (this.form.logoUrl == '') {
-            this.$message.warning('请上传企业logo')
-          } else if (this.form.bizLicUrl == '') {
-            this.$message.warning('请上传营业执照照片')
-          } else {
-            this.current++
-          }
-        } else {
-          return false
-        }
-      })
+      this.current++
+      // this.$refs.ruleForm.validate((valid) => {
+      //   if (valid) {
+      //     if (this.form.logoUrl == '') {
+      //       this.$message.warning('请上传企业logo')
+      //     } else if (this.form.bizLicUrl == '') {
+      //       this.$message.warning('请上传营业执照照片')
+      //     } else {
+      //       this.current++
+      //     }
+      //   } else {
+      //     return false
+      //   }
+      // })
     },
     onSecond() {
-      // this.current++ 2
-      this.$refs.ruleFormLegal.validate((valid) => {
-        if (valid) {
-          if (this.formLegal.idCardFrontUrl == '') {
-            this.$message.warning('请上传身份证正面照片')
-          } else if (this.formLegal.idCardBackUrl == '') {
-            this.$message.warning('请上传身份证反面照片')
-          } else {
-            this.current++
-          }
-        } else {
-          console.log('error submit!!')
-        }
-      })
+      this.current++ //2
+      // this.$refs.ruleFormLegal.validate((valid) => {
+      //   if (valid) {
+      //     if (this.formLegal.idCardFrontUrl == '') {
+      //       this.$message.warning('请上传身份证正面照片')
+      //     } else if (this.formLegal.idCardBackUrl == '') {
+      //       this.$message.warning('请上传身份证反面照片')
+      //     } else {
+      //       this.current++
+      //     }
+      //   } else {
+      //     console.log('error submit!!')
+      //   }
+      // })
     },
     onFormPerson() {
-      // this.current++ ruleformPerson 1
-      this.$refs.ruleformPerson.validate((valid) => {
-        if (valid) {
-          console.log(1111)
-          if (this.formPerson.idCardFrontUrl == '') {
-            this.$message.warning('请上传身份证正面照片')
-            // this.$refs.ruleformPerson.clearValidate('contactIdFrontUrl')
-          } else if (this.formPerson.idCardBackUrl == '') {
-            this.$message.warning('请上传身份证反面照片')
-            // this.$refs.ruleformPerson.clearValidate('contactIdBackUrl')
-          } else {
-            this.current++
-          }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.current++ //ruleformPerson 1
+      // this.$refs.ruleformPerson.validate((valid) => {
+      //   if (valid) {
+      //     console.log(1111)
+      //     if (this.formPerson.idCardFrontUrl == '') {
+      //       this.$message.warning('请上传身份证正面照片')
+      //       // this.$refs.ruleformPerson.clearValidate('contactIdFrontUrl')
+      //     } else if (this.formPerson.idCardBackUrl == '') {
+      //       this.$message.warning('请上传身份证反面照片')
+      //       // this.$refs.ruleformPerson.clearValidate('contactIdBackUrl')
+      //     } else {
+      //       this.current++
+      //     }
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
     onFormContract() {
-      this.$refs.ruleformContract.validate((valid) => {
-        if (valid) {
-          this.add()
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      // this.$refs['basic'].$refs['ruleForm'].validate(valid=>{
+      // this.$refs['ruleForm'] &&
+      const p1 = new Promise((resolve, reject) => {
+        this.$refs.ruleForm.validate((valid) => {
+          if (valid) {
+            if (this.form.logoUrl == '') {
+              this.$message.warning('请上传企业logo')
+            } else if (this.form.bizLicUrl == '') {
+              this.$message.warning('请上传营业执照照片')
+            } else {
+              resolve()
+            }
+          } else {
+            return false
+          }
+        })
+      })
+      const p2 = new Promise((resolve, reject) => {
+        this.$refs.ruleformPerson.validate((valid) => {
+          if (valid) {
+            console.log(1111)
+            if (this.formPerson.idCardFrontUrl == '') {
+              this.$message.warning('请上传身份证正面照片')
+              // this.$refs.ruleformPerson.clearValidate('contactIdFrontUrl')
+            } else if (this.formPerson.idCardBackUrl == '') {
+              this.$message.warning('请上传身份证反面照片')
+              // this.$refs.ruleformPerson.clearValidate('contactIdBackUrl')
+            } else {
+              resolve()
+            }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      })
+      const p3 = new Promise((resolve, reject) => {
+        this.$refs.ruleFormLegal.validate((valid) => {
+          if (valid) {
+            if (this.formLegal.idCardFrontUrl == '') {
+              this.$message.warning('请上传身份证正面照片')
+            } else if (this.formLegal.idCardBackUrl == '') {
+              this.$message.warning('请上传身份证反面照片')
+            } else {
+              resolve()
+            }
+          } else {
+            console.log('error submit!!')
+          }
+        })
+      })
+      const p4 = new Promise((resolve, reject) => {
+        this.$refs['ruleformContract'].validate((valid) => {
+          if (valid) {
+            resolve()
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      })
+      // this.$refs['ruleformContract'].validate((valid) => {
+      //   if (valid) {
+      //     this.add()
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
+      Promise.all([p1, p2, p3, p4]).then(() => {
+        console.log('验证通过,提交表单')
+        this.add()
       })
     },
     resetForm() {
@@ -638,6 +720,9 @@ export default {
       }
     },
     entGradeChange() {},
+    keep() {
+      this.$router.push('/enterpriseManage')
+    },
   },
 }
 </script>

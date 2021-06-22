@@ -101,6 +101,14 @@ const entInfoId = (params) => getAction("/entInfo/get", params);
 const updateStatus = (params) => postAction("/entInfo/updateStatus", params);
 const addEntInfo = (params) => postAction("/entInfo/save", params);
 const entInfoUpdate = (params) => postAction("/entInfo/update", params);
+//运营商大区
+const operator = (params) => getAction("/operator/listAll", params);
+const region = (params) => getAction("/region/listAll", params);
+const serviceRegion = (params) => getAction("/serviceRegion/list", params);
+const forIDserviceRegion = (params) => getAction("/serviceRegion/get", params);
+const addServiceRegion = (params) => postAction("/serviceRegion/save", params);
+const updateServiceRegion = (params) => postAction("/serviceRegion/update", params);
+const deleteServiceRegion = (params) => deleteAction("/serviceRegion/delete", params);
 
 // 中转HTTP请求
 export const transitRESTful = {
@@ -108,6 +116,7 @@ export const transitRESTful = {
     post: (url, parameter) => postAction(getTransitURL(url), parameter),
     put: (url, parameter) => putAction(getTransitURL(url), parameter),
     http: (url, parameter) => httpAction(getTransitURL(url), parameter),
+    delete: (url, parameter) => deleteAction(getTransitURL(url), parameter),
 }
 
 export {
@@ -174,5 +183,12 @@ export {
     areaList,
     industryList,
     entInfoId,
-    entInfoUpdate
+    entInfoUpdate,
+    operator,
+    region,
+    serviceRegion,
+    addServiceRegion,
+    forIDserviceRegion,
+    updateServiceRegion,
+    deleteServiceRegion
 }

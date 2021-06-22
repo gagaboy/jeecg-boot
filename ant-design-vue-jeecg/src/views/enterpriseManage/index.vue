@@ -20,7 +20,7 @@
                 />
               </a-form-item> -->
               <a-form-item label="客户等级">
-                <a-select placeholder="请选择" v-model="queryParam.authentication">
+                <a-select placeholder="请选择" v-model="queryParam.entGrade">
                   <a-select-option :value="item.value" v-for="(item, index) in entGradeList" :key="index">{{
                     item.name
                   }}</a-select-option>
@@ -30,15 +30,10 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="认证情况">
-                  <a-select
-                    placeholder="请选择"
-                    mode="multiple"
-                    v-model="queryParam.authentication"
-                    @change="authenticationChange"
-                  >
-                    <a-select-option value="CUCC">中国联通</a-select-option>
-                    <a-select-option value="CMCC">中国移动</a-select-option>
-                    <a-select-option value="CTCC">中国电信</a-select-option>
+                  <a-select placeholder="请选择" mode="multiple" v-model="certStatus" @change="authenticationChange">
+                    <a-select-option :value="1">中国联通</a-select-option>
+                    <a-select-option :value="2">中国移动</a-select-option>
+                    <a-select-option :value="4">中国电信</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -82,6 +77,19 @@
         <a slot="logoUrl" slot-scope="row">
           <img :src="row" alt="" style="width: 80px; height: 80px" />
         </a>
+        <span slot="entCertificationList" slot-scope="row">
+          <span v-if="row.length > 0">
+            <img :src="require('@/assets/status/' + row[0].operator + row[0].status + '.png')" alt="" />
+            <img :src="require('@/assets/status/' + row[1].operator + row[1].status + '.png')" alt="" />
+            <img :src="require('@/assets/status/' + row[2].operator + row[2].status + '.png')" alt="" />
+          </span>
+        </span>
+        <span slot="entGrade" slot-scope="row">
+          <span v-if="row == 0">金牌级</span>
+          <span v-if="row == 1">银牌级</span>
+          <span v-if="row == 2">铜牌级</span>
+          <span v-if="row == 3">标准级</span>
+        </span>
         <span slot="action" slot-scope="row">
           <a @click="showEditVisible(row.id)">编辑</a>
           <a-divider type="vertical" />
@@ -205,16 +213,19 @@ const columns = [
     title: '客户等级',
     dataIndex: 'entGrade',
     key: 'entGrade',
+    scopedSlots: { customRender: 'entGrade' },
   },
   {
     title: '认证情况',
-    key: 'status',
-    dataIndex: 'status',
+    width: '220px',
+    key: 'entCertificationList',
+    dataIndex: 'entCertificationList',
+    scopedSlots: { customRender: 'entCertificationList' },
   },
   {
     title: '状态',
-    key: 'createBy',
-    dataIndex: 'createBy',
+    key: 'status',
+    dataIndex: 'status',
   },
 
   {
@@ -244,6 +255,7 @@ export default {
       queryParam: {
         pageSize: null,
         pageNo: null,
+        certStatus: null,
       },
 
       selectedRowKeys: [],
@@ -277,6 +289,7 @@ export default {
         { value: '3', name: '标准级' },
       ],
       authenticationList: [],
+      certStatus: [],
     }
   },
   created() {
@@ -358,6 +371,8 @@ export default {
       this.queryParam.industry = ''
       this.industryList = []
       this.queryParam.status = null
+      this.queryParam.certStatus = null
+      this.queryParam.entGrade = null
       this.getentInfoList()
     },
     showDeleteConfirm() {
@@ -393,7 +408,12 @@ export default {
     },
     authenticationChange(v) {
       console.log(v)
-      console.log(this.queryParam.authentication)
+      this.queryParam.certStatus = null
+      v.forEach((item) => {
+        // console.log(item)
+        this.queryParam.certStatus += item
+      })
+      console.log(this.queryParam.certStatus)
     },
   },
 }
