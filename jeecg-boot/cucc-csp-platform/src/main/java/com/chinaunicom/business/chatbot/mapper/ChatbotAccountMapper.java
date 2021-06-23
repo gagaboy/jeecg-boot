@@ -1,0 +1,28 @@
+package com.chinaunicom.business.chatbot.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chinaunicom.business.chatbot.entity.ChatbotAccount;
+import com.chinaunicom.business.chatbot.vo.ChatbotAccountVO;
+import org.apache.ibatis.annotations.Param;
+
+/**
+ * <p>
+ * chatbot账号信息 Mapper 接口
+ * </p>
+ *
+ * @author 木头人
+ * @since 2021-06-22
+ */
+public interface ChatbotAccountMapper extends BaseMapper<ChatbotAccount> {
+
+    /**
+     * 分页列表查询
+     *
+     * @param page
+     * @param chatbotAccountVO
+     * @return
+     */
+    IPage pageList(Page page, @Param("cav")ChatbotAccountVO chatbotAccountVO);
+}

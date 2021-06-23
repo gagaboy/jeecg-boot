@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinaunicom.business.chatbot.mapper.ChatbotAccountMapper">
+
+    <select id="pageList" resultType="com.chinaunicom.business.chatbot.vo.ChatbotAccountVO">
+        SELECT ca.*, sr.chatbot_domain, caa.audit_status, ci.channel_id, ci.channel_name
+        FROM chatbot_account ca
+        INNER JOIN service_region sr ON ca.service_region_id = sr.id
+        LEFT JOIN chatbot_account_audit caa ON ca.chatbot_id = caa.chatbot_id
+        LEFT JOIN channel_chatbot_appl caap ON ca.chatbot_id = caap.chatbot_id
+        LEFT JOIN channel_info ci ON caap.channel_id = ci.channel_id
+        <where>
+            <if test="cav.chatbotName != null and cav.chatbotName != ''">
+                AND ca.chatbot_name like CONCAT("%", #{cav.chatbotName},"%")
+            </if>
+            <if test="cav.smsNum != null and cav.smsNum != ''">
+                AND ca.sms_num = #{cav.smsNum}
+            </if>
+            <if test="cav.channelId != null and cav.channelId != ''">
+                AND ci.channel_id = #{cav.channelId}
+            </if>
+            <if test="cav.auditStatus != null and cav.auditStatus != ''">
+                AND caa.audit_status = #{cav.auditStatus}
+            </if>
+        </where>
+        ORDER BY ca.create_time DESC
+    </select>
+</mapper>
