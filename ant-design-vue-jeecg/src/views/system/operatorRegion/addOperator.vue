@@ -21,8 +21,11 @@
       <a-form-model-item label="serverRoot" prop="serverRoot">
         <a-input v-model="form.serverRoot" />
       </a-form-model-item>
-      <a-form-model-item label="fileServerRoot" prop="fileRoot">
+      <a-form-model-item label="fileRoot" prop="fileRoot">
         <a-input v-model="form.fileRoot" />
+      </a-form-model-item>
+      <a-form-model-item label="chatbot账号域名" prop="fileRoot">
+        <a-input v-model="form.chatbotDomain" />
       </a-form-model-item>
       <a-form-model-item label="报备IP" prop="reportIp">
         <a-input v-model="form.reportIp" />
@@ -73,7 +76,8 @@ export default {
         operatorId: [{ required: true, message: '请选择运营商', trigger: 'change' }],
         regionId: [{ required: true, message: '请选择大区', trigger: 'change' }],
         serverRoot: [{ required: true, message: '请输入serverRoot', trigger: 'blur' }],
-        fileRoot: [{ required: true, message: 'fileServerRoot', trigger: 'blur' }],
+        fileRoot: [{ required: true, message: '请输入fileRoot', trigger: 'blur' }],
+        chatbotDomain: [{ required: true, message: '请输入chatbot账号域名', trigger: 'blur' }],
         reportIp: [{ required: true, message: '请输入报备IP', trigger: 'blur' }],
         upCallbackUrl: [{ required: true, message: '请输入上行回调地址', trigger: 'blur' }],
       },

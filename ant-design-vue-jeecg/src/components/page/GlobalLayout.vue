@@ -310,6 +310,7 @@ body {
     background: #fff;
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
     position: relative;
+    margin-left: 10px;
   }
 
   .header,
@@ -549,8 +550,11 @@ body {
   box-shadow: 2px 116px 6px 0 rgba(0, 21, 41, 0.35);
   position: relative;
   z-index: 10;
-
-  &.ant-fixed-sidemenu {
+  background-color: #fff;
+  border-radius: 0px 47px 47px 0px;
+  box-shadow: 7px -2px 39px -28px #030e14;
+  width: 336px;
+  .ant-fixed-sidemenu {
     position: fixed;
     height: 100%;
   }
@@ -562,7 +566,7 @@ body {
     padding-left: 10px;
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
-    background: #002140;
+    background: none !important;
     overflow: hidden;
 
     img,
@@ -572,17 +576,16 @@ body {
     }
 
     img {
-      height: 32px;
+      width: 60px;
+      height: 60px;
     }
 
     h1 {
-      color: #fff;
-      font-size: 18px;
       margin: 0 0 0 8px;
-      font-family: 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-        'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol';
-      font-weight: 600;
+
+      font-size: 20px;
+      font-family: MicrosoftYaHei;
+      color: #bb2335;
     }
   }
 
@@ -591,11 +594,14 @@ body {
     box-shadow: 2px 116px 8px 0 rgba(29, 35, 41, 0.05);
 
     .logo {
-      background: #fff;
-      box-shadow: 1px 1px 0 0 #e8e8e8;
+      // background: #fff;
+      // box-shadow: 1px 1px 0 0 #e8e8e8;
 
       h1 {
         color: unset;
+        font-size: 20px;
+        font-family: MicrosoftYaHei;
+        color: #bb2335;
       }
     }
 

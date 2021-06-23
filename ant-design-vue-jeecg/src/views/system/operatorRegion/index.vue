@@ -128,6 +128,10 @@ export default {
           dataIndex: 'fileRoot',
         },
         {
+          title: 'chatbot账号域名',
+          dataIndex: 'chatbotDomain',
+        },
+        {
           title: '报备IP',
           dataIndex: 'reportIp',
         },
