@@ -84,7 +84,7 @@ public class EntInfoController {
         }
     }
 
-    @ApiOperation(value = "企业状态变更", notes = "企业状态变更")
+    @ApiOperation(value = "启用/停用企业", notes = "启用/停用企业")
     @PostMapping("/updateStatus")
     public Result updateStatus(@RequestBody EntInfo entInfo) {
         try {
@@ -98,7 +98,7 @@ public class EntInfoController {
             return Result.OK();
         } catch (Exception e) {
             log.error("/entInfo/updateStatus 接口异常：{}", e);
-            return Result.error("企业状态变更失败");
+            return Result.error("启用/停用企业失败");
         }
     }
 

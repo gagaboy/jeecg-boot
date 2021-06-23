@@ -8,6 +8,8 @@ import com.chinaunicom.business.serviceregion.entity.ServiceRegion;
 import com.chinaunicom.business.serviceregion.mapper.ServiceRegionMapper;
 import com.chinaunicom.business.serviceregion.service.IServiceRegionService;
 import com.chinaunicom.business.serviceregion.vo.ServiceRegionVO;
+import com.chinaunicom.common.entity.SysArea;
+import com.chinaunicom.common.service.IRegionProvinceApplService;
 import com.chinaunicom.constants.StatusConstant;
 import org.jeecg.modules.system.entity.SysDictItem;
 import org.jeecg.modules.system.service.ISysDictItemService;
@@ -15,6 +17,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * <p>
@@ -32,6 +36,9 @@ public class ServiceRegionServiceImpl extends ServiceImpl<ServiceRegionMapper, S
 
     @Autowired
     private ISysDictItemService sysDictItemService;
+
+    @Autowired
+    private IRegionProvinceApplService regionProvinceApplService;
 
     @Override
     public void saveServiceRegion(ServiceRegion serviceRegion) {
@@ -66,6 +73,12 @@ public class ServiceRegionServiceImpl extends ServiceImpl<ServiceRegionMapper, S
     @Override
     public IPage<ServiceRegionVO> pageList(ServiceRegionVO serviceRegionVO, Page page) {
         return serviceRegionMapper.pageList(page, serviceRegionVO);
+    }
+
+    @Override
+    public List<SysArea> listProvinceByServiceRegion(String serviceRegionId) {
+        ServiceRegion serviceRegion = serviceRegionMapper.selectById(serviceRegionId);
+        return regionProvinceApplService.getProvinceByRegionId(serviceRegion.getRegionId());
     }
 
     /**

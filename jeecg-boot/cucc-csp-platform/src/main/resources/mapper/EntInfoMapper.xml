@@ -81,7 +81,7 @@
                 </choose>
             </if>
         </where>
-        ORDER BY ei.update_time DESC
+        ORDER BY ei.create_time DESC
     </select>
 
     <select id="queryCertificationList" resultType="com.chinaunicom.business.entinfo.entity.EntCertification">

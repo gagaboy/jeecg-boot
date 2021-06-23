@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chinaunicom.business.serviceregion.entity.ServiceRegion;
 import com.chinaunicom.business.serviceregion.vo.ServiceRegionVO;
+import com.chinaunicom.common.entity.SysArea;
+
+import java.util.List;
 
 /**
  * <p>
@@ -38,4 +41,12 @@ public interface IServiceRegionService extends IService<ServiceRegion> {
      * @return
      */
     IPage<ServiceRegionVO> pageList(ServiceRegionVO serviceRegionVO, Page page);
+
+    /**
+     * 查询指定服务大区关联的省份信息列表
+     *
+     * @param serviceRegionId
+     * @return
+     */
+    List<SysArea> listProvinceByServiceRegion(String serviceRegionId);
 }

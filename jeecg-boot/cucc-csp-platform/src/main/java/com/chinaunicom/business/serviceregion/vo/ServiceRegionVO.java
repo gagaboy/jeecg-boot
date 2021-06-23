@@ -44,6 +44,9 @@ public class ServiceRegionVO {
     @ApiModelProperty(value = "运营商大区素材审核接口地址")
     private String fileRoot;
 
+    @ApiModelProperty(value = "chatbot账号域名")
+    private String chatbotDomain;
+
     @ApiModelProperty(value = "报备ip")
     private String reportIp;
 

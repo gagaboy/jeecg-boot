@@ -97,5 +97,27 @@ public class ServiceRegionController {
             return Result.error("删除服务大区失败");
         }
     }
+
+    @ApiOperation(value = "查询指定运营商大区", notes = "查询指定运营商大区")
+    @GetMapping("/listByOperator")
+    public Result listByOperator(@RequestParam String operatorId) {
+        try {
+            return Result.OK(serviceRegionService.lambdaQuery().eq(ServiceRegion::getOperatorId, operatorId).eq(ServiceRegion::getStatus, StatusConstant.STATUS_ENABLED).list());
+        } catch (Exception e) {
+            log.error("/serviceRegion/listByOperator 接口异常：{}", e);
+            return Result.error("查询大区列表失败");
+        }
+    }
+
+    @ApiOperation(value = "查询指定服务大区关联的省份", notes = "查询指定服务大区关联的省份")
+    @GetMapping("/listProvinceByServiceRegion")
+    public Result listProvinceByServiceRegion(@RequestParam String serviceRegionId) {
+        try {
+            return Result.OK(serviceRegionService.listProvinceByServiceRegion(serviceRegionId));
+        } catch (Exception e) {
+            log.error("/serviceRegion/listProvinceByServiceRegion 接口异常：{}", e);
+            return Result.error("查询定服务大区关联的省份");
+        }
+    }
 }
 

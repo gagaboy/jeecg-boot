@@ -58,6 +58,10 @@ public class ServiceRegion extends Model<ServiceRegion> {
     @ApiModelProperty(value = "运营商大区素材审核接口地址")
     private String fileRoot;
 
+    @NotBlank(message = "chatbot账号域名不能为空")
+    @ApiModelProperty(value = "chatbot账号域名")
+    private String chatbotDomain;
+
     @ApiModelProperty(value = "报备ip")
     private String reportIp;
 
