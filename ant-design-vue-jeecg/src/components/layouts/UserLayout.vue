@@ -21,7 +21,7 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
+            <img src="~@/assets/logo.svg" class="logo" alt="logo" />
             <span class="title">联通CSP运营管理平台</span>
           </a>
         </div>
@@ -31,139 +31,138 @@
       </div>
       <route-view></route-view>
       <div class="footer">
-        <div class="links">
-        </div>
-        <div class="copyright">
-          Copyright &copy; 2021 <a href="http://wo.com.cn" target="_blank">联通在线</a> 出品
-        </div>
+        <div class="links"></div>
+        <div class="copyright">Copyright &copy; 2021 <a href="http://wo.com.cn" target="_blank">联通在线</a> 出品</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import RouteView from "@/components/layouts/RouteView"
-  import { mixinDevice } from '@/utils/mixin.js'
+import RouteView from '@/components/layouts/RouteView'
+import { mixinDevice } from '@/utils/mixin.js'
 
-  export default {
-    name: "UserLayout",
-    components: { RouteView },
-    mixins: [mixinDevice],
-    data () {
-      return {}
-    },
-    mounted () {
-      document.body.classList.add('userLayout')
-    },
-    beforeDestroy () {
-      document.body.classList.remove('userLayout')
-    },
-  }
+export default {
+  name: 'UserLayout',
+  components: { RouteView },
+  mixins: [mixinDevice],
+  data() {
+    return {}
+  },
+  mounted() {
+    document.body.classList.add('userLayout')
+  },
+  beforeDestroy() {
+    document.body.classList.remove('userLayout')
+  },
+}
 </script>
 
 <style lang="less" scoped>
-  #userLayout.user-layout-wrapper {
-    height: 100%;
-    &.mobile {
-      .container {
-        .main {
-          max-width: 368px;
-          width: 98%;
-        }
-      }
-    }
-
+#userLayout.user-layout-wrapper {
+  height: 100%;
+  &.mobile {
     .container {
-      width: 100%;
-      min-height: 100%;
-      background: #f0f2f5 url(~@/assets/login_background.jpg) no-repeat 50%;
-      background-size: 100%;
-      padding: 110px 0 144px;
-      position: relative;
-
-      a {
-        text-decoration: none;
-      }
-
-      .top {
-        text-align: left;
-        margin: 70px 120px;
-        .header {
-          height: 44px;
-          line-height: 44px;
-
-          .badge {
-            position: absolute;
-            display: inline-block;
-            line-height: 1;
-            vertical-align: middle;
-            margin-left: -12px;
-            margin-top: -10px;
-            opacity: 0.8;
-          }
-
-          .logo {
-            height: 70px;
-            vertical-align: top;
-            margin: -10px 10px;
-            border-style: none;
-          }
-
-          .title {
-            font-size: 33px;
-            color: rgba(0, 0, 0, .85);
-            font-family: "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            font-weight: 600;
-            position: relative;
-            top: 2px;
-          }
-        }
-        .desc {
-          font-size: 16px;
-          color: rgba(0, 0, 0, 0.45);
-          margin: 5px 0px 30px 100px;
-        }
-      }
-
       .main {
-        min-width: 260px;
-        width: 368px;
-        margin: 10px 150px;
-        border-radius: 15px;
-        background-clip: padding-box;
-        padding: 35px 35px 15px 35px;
-      }
-
-      .footer {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-        padding: 0 16px;
-        margin: 48px 0 24px;
-        text-align: center;
-
-        .links {
-          margin-bottom: 8px;
-          font-size: 14px;
-          a {
-            color: rgba(0, 0, 0, 0.45);
-            transition: all 0.3s;
-            &:not(:last-child) {
-              margin-right: 40px;
-            }
-          }
-        }
-        .copyright {
-          color: rgba(0, 0, 0, 0.45);
-          font-size: 14px;
-        }
+        max-width: 368px;
+        width: 98%;
       }
     }
   }
 
-  #particles-js{
-   width: 100%;
-   height: calc(100% - 110px);
-    position: absolute;  
+  .container {
+    width: 100%;
+    min-height: 100%;
+    background: #f0f2f5 url(~@/assets/login_background.jpg) no-repeat 50%;
+    background-size: 100%;
+    padding: 110px 0 144px;
+    position: relative;
+
+    a {
+      text-decoration: none;
+    }
+
+    .top {
+      text-align: left;
+      margin: 70px 120px;
+      .header {
+        height: 44px;
+        line-height: 44px;
+
+        .badge {
+          position: absolute;
+          display: inline-block;
+          line-height: 1;
+          vertical-align: middle;
+          margin-left: -12px;
+          margin-top: -10px;
+          opacity: 0.8;
+        }
+
+        .logo {
+          height: 70px;
+          vertical-align: top;
+          margin: -10px 10px;
+          border-style: none;
+        }
+
+        .title {
+          font-size: 33px;
+          color: rgba(0, 0, 0, 0.85);
+          font-family: 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+            'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+            'Segoe UI Symbol';
+          font-weight: 600;
+          position: relative;
+          top: 2px;
+        }
+      }
+      .desc {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.45);
+        margin: 5px 0px 30px 100px;
+      }
+    }
+
+    .main {
+      min-width: 260px;
+      width: 368px;
+      margin: 10px 150px;
+      border-radius: 15px;
+      background-clip: padding-box;
+      padding: 35px 35px 15px 35px;
+    }
+
+    .footer {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      padding: 0 16px;
+      margin: 48px 0 24px;
+      text-align: center;
+
+      .links {
+        margin-bottom: 8px;
+        font-size: 14px;
+        a {
+          color: rgba(0, 0, 0, 0.45);
+          transition: all 0.3s;
+          &:not(:last-child) {
+            margin-right: 40px;
+          }
+        }
+      }
+      .copyright {
+        color: rgba(0, 0, 0, 0.45);
+        font-size: 14px;
+      }
+    }
   }
+}
+
+#particles-js {
+  width: 100%;
+  height: calc(100% - 110px);
+  position: absolute;
+}
 </style>

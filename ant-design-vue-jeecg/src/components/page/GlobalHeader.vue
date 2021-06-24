@@ -6,7 +6,7 @@
       fixedHeader && 'ant-header-fixedHeader',
       sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed',
     ]"
-    :style="{ padding: '0' }"
+    :style="{ padding: '0', margin: '0 0 0 12px' }"
   >
     <div v-if="mode === 'sidemenu'" class="header" :class="theme">
       <a-icon

@@ -1,16 +1,17 @@
 <template>
-  <a-card :bordered="false">
+  <div :bordered="false">
     <div v-show="listShow">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="企业名称">
-                <a-input v-model="queryParam.entName" placeholder="请输入企业名称" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <!-- <a-form-item label="所属行业">
+      <a-card>
+        <div class="table-page-search-wrapper">
+          <a-form layout="inline">
+            <a-row :gutter="48">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="企业名称">
+                  <a-input v-model="queryParam.entName" placeholder="请输入企业名称" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <!-- <a-form-item label="所属行业">
                 <a-cascader
                   v-model="industryList"
                   :field-names="{ label: 'name', value: 'id', children: 'children' }"
@@ -19,104 +20,107 @@
                   @change="industryChange"
                 />
               </a-form-item> -->
-              <a-form-item label="客户等级">
-                <a-select placeholder="请选择" v-model="queryParam.entGrade">
-                  <a-select-option :value="item.value" v-for="(item, index) in entGradeList" :key="index">{{
-                    item.name
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="认证情况">
-                  <a-select placeholder="请选择" mode="multiple" v-model="certStatus" @change="authenticationChange">
-                    <a-select-option :value="1">中国联通</a-select-option>
-                    <a-select-option :value="2">中国移动</a-select-option>
-                    <a-select-option :value="4">中国电信</a-select-option>
+                <a-form-item label="客户等级">
+                  <a-select placeholder="请选择" v-model="queryParam.entGrade">
+                    <a-select-option :value="item.value" v-for="(item, index) in entGradeList" :key="index">{{
+                      item.name
+                    }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
+              <template v-if="advanced">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="认证情况">
+                    <a-select placeholder="请选择" mode="multiple" v-model="certStatus" @change="authenticationChange">
+                      <a-select-option :value="1">中国联通</a-select-option>
+                      <a-select-option :value="2">中国移动</a-select-option>
+                      <a-select-option :value="4">中国电信</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
 
-              <a-col :md="8" :sm="24">
-                <a-form-item label="企业状态">
-                  <a-select placeholder="请选择" v-model="queryParam.status">
-                    <a-select-option :value="0">启用</a-select-option>
-                    <a-select-option :value="1">禁用</a-select-option>
-                  </a-select>
-                </a-form-item>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="企业状态">
+                    <a-select placeholder="请选择" v-model="queryParam.status">
+                      <a-select-option :value="0">启用</a-select-option>
+                      <a-select-option :value="1">禁用</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+              </template>
+              <a-col :md="(!advanced && 8) || 24" :sm="24">
+                <span
+                  class="table-page-search-submitButtons"
+                  :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+                >
+                  <a-button type="primary" @click="getentInfoList(1)">查询</a-button>
+                  <a-button style="margin-left: 8px" @click="resetSearchForm">重置</a-button>
+                  <a @click="toggleAdvanced" style="margin-left: 8px">
+                    {{ advanced ? '收起' : '展开' }}
+                    <a-icon :type="advanced ? 'up' : 'down'" />
+                  </a>
+                </span>
               </a-col>
-            </template>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="getentInfoList(1)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="resetSearchForm">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="showDrawer">新建</a-button>
-      </div>
-      <a-table
-        :columns="columns"
-        :data-source="data"
-        :rowKey="(record) => record.id"
-        :pagination="page"
-        @change="pageChange"
-        table-layout="fixed"
-      >
-        <a slot="logoUrl" slot-scope="row">
-          <img :src="row" alt="" style="width: 80px; height: 80px" />
-        </a>
-        <span slot="entCertificationList" slot-scope="row">
-          <span v-if="row.length > 0">
-            <img :src="require('@/assets/status/' + row[0].operator + row[0].status + '.png')" alt="" />
-            <img :src="require('@/assets/status/' + row[1].operator + row[1].status + '.png')" alt="" />
-            <img :src="require('@/assets/status/' + row[2].operator + row[2].status + '.png')" alt="" />
+            </a-row>
+          </a-form>
+        </div>
+      </a-card>
+      <a-card>
+        <div class="table-operator">
+          <a-button type="primary" icon="plus" @click="showDrawer">新建</a-button>
+        </div>
+        <a-table
+          :columns="columns"
+          :data-source="data"
+          :rowKey="(record) => record.id"
+          :pagination="page"
+          @change="pageChange"
+          table-layout="fixed"
+        >
+          <a slot="logoUrl" slot-scope="row">
+            <img :src="row" alt="" style="width: 80px; height: 80px" />
+          </a>
+          <span slot="entCertificationList" slot-scope="row">
+            <span v-if="row.length > 0">
+              <img :src="require('@/assets/status/' + row[0].operator + row[0].status + '.png')" alt="" />
+              <img :src="require('@/assets/status/' + row[1].operator + row[1].status + '.png')" alt="" />
+              <img :src="require('@/assets/status/' + row[2].operator + row[2].status + '.png')" alt="" />
+            </span>
           </span>
-        </span>
-        <span slot="entGrade" slot-scope="row">
-          <span v-if="row == 0">金牌级</span>
-          <span v-if="row == 1">银牌级</span>
-          <span v-if="row == 2">铜牌级</span>
-          <span v-if="row == 3">标准级</span>
-        </span>
-        <span slot="action" slot-scope="row">
-          <a @click="showEditVisible(row.id)">编辑</a>
-          <a-divider type="vertical" />
-          <a @click="showModal(row.id)">查看</a>
-          <a-divider type="vertical" />
-          <a>认证</a>
-          <a-divider type="vertical" />
-          <a-popconfirm
-            :title="`确认${Number(row.status) === 0 ? '禁用' : '启用'}该客户？`"
-            @confirm="statusChange(row)"
-          >
-            <a-icon
-              slot="icon"
-              type="question-circle"
-              :style="{ color: Number(row.status) === 1 ? '#ff7875' : '#1890FF' }"
-            />
-            <a-button type="link" :style="{ color: Number(row.status) === 0 ? '#ff7875' : '#1890FF' }" size="small">{{
-              Number(row.status) == 0 ? '禁用' : '启用'
-            }}</a-button>
-          </a-popconfirm>
-          <!-- 
+          <span slot="entGrade" slot-scope="row">
+            <span v-if="row == 0">金牌级</span>
+            <span v-if="row == 1">银牌级</span>
+            <span v-if="row == 2">铜牌级</span>
+            <span v-if="row == 3">标准级</span>
+          </span>
+          <span slot="action" slot-scope="row">
+            <a @click="showEditVisible(row.id)">编辑</a>
+            <a-divider type="vertical" />
+            <a @click="showModal(row.id)">查看</a>
+            <a-divider type="vertical" />
+            <a>认证</a>
+            <a-divider type="vertical" />
+            <a-popconfirm
+              :title="`确认${Number(row.status) === 0 ? '禁用' : '启用'}该客户？`"
+              @confirm="statusChange(row)"
+            >
+              <a-icon
+                slot="icon"
+                type="question-circle"
+                :style="{ color: Number(row.status) === 1 ? '#ff7875' : '#1890FF' }"
+              />
+              <a-button type="link" :style="{ color: Number(row.status) === 0 ? '#ff7875' : '#1890FF' }" size="small">{{
+                Number(row.status) == 0 ? '禁用' : '启用'
+              }}</a-button>
+            </a-popconfirm>
+            <!-- 
         <a-divider type="vertical" />
         <a @click="showDeleteConfirm">删除</a> -->
-          <!-- <a-divider type="vertical" />
+            <!-- <a-divider type="vertical" />
         <a class="ant-dropdown-link"> 更多<a-icon type="down" /> </a> -->
-        </span>
-      </a-table>
+          </span>
+        </a-table>
+      </a-card>
     </div>
 
     <!-- 编辑抽屉 -->
@@ -179,7 +183,7 @@
         <look-info :editItem="editItem"></look-info>
       </a-modal>
     </div>
-  </a-card>
+  </div>
 </template>
 
 <script>
