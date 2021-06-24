@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinaunicom.business.channel.mapper.ChannelInfoMapper">
+
+    <resultMap id="ChannelInfoMap" type="com.chinaunicom.business.channel.vo.ChannelInfoVO">
+        <id property="channelId" column="channel_id"/>
+        <result property="channelName" column="ent_name"/>
+        <result property="channelType" column="abbr_name"/>
+        <result property="channelTypeName" column="ent_code"/>
+        <result property="status" column="logo_url"/>
+        <result property="entId" column="ent_grade"/>
+        <result property="entLogoUrl" column="status"/>
+        <result property="entName" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+
+        <collection property="chatbotAccountList" ofType="com.chinaunicom.business.chatbot.vo.ChatbotAccountSimpleVO" select="queryChatbotAccountList" column="channel_id">
+        </collection>
+    </resultMap>
+
+    <select id="pageList" resultMap="ChannelInfoMap">
+        SELECT ci.*, ei.ent_name, sdi.item_text as channel_type_name
+        FROM channel_info ci
+        INNER JOIN ent_info ei ON ci.ent_id = ei.ent_id
+        INNER JOIN sys_dict_item sdi ON ci.channel_type = sdi.id
+        WHERE ci.status != -1
+        <if test="civ.entName != null and civ.entName != ''">
+            AND ei.ent_name like CONCAT("%", #{civ.entName},"%")
+        </if>
+        <if test="civ.channelName != null and civ.channelName != ''">
+            AND ci.channel_name like  CONCAT("%", #{civ.channelName},"%")
+        </if>
+        <if test="civ.channelType != null and civ.channelType != ''">
+            AND ci.channel_type = #{civ.channelType}
+        </if>
+        ORDER BY ci.create_time DESC
+    </select>
+
+    <select id="queryChatbotAccountList" resultType="com.chinaunicom.business.chatbot.vo.ChatbotAccountSimpleVO">
+        SELECT ca.chatbot_id, ca.chatbot_name, ca.sms_num, sdi.item_value AS operator
+        FROM channel_chatbot_appl caa
+        INNER JOIN chatbot_account ca ON caa.chatbot_id = ca.chatbot_id
+        INNER JOIN service_region sr ON ca.service_region_id = sr.id
+        INNER JOIN sys_dict_item sdi ON sr.operator_id = sdi.id
+        WHERE caa.channel_id = #{channel_id}
+    </select>
+
+    <update id="deleteByBatch" parameterType="list">
+        UPDATE channel_info
+        SET status = -1
+        WHERE channel_id IN
+        <foreach collection="ids" item="channelId" open="(" close=")" separator="," >
+            #{channelId}
+        </foreach>
+    </update>
+</mapper>
