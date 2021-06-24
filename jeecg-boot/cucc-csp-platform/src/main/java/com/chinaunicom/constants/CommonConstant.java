@@ -59,5 +59,7 @@ public class CommonConstant {
          * csp 5g大区
          */
         public static final String CSP_REGION = "csp_region";
+
+        public static final String CSP_CHANNEL_TYPE = "channel_type";
     }
 }

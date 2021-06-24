@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.chinaunicom.business.chatbot.entity.ChatbotAccount;
 import com.chinaunicom.business.chatbot.vo.ChatbotAccountVO;
 
+import java.util.List;
+
 /**
  * <p>
  * chatbot账号信息 服务类
@@ -46,4 +48,11 @@ public interface IChatbotAccountService extends IService<ChatbotAccount> {
      * @param status
      */
     void updateStatus(String chatbotId, int status);
+
+    /**
+     * 查询所有未被通道关联的chatbot账号
+     *
+     * @return
+     */
+    List<ChatbotAccount> listUnlinkChannel();
 }

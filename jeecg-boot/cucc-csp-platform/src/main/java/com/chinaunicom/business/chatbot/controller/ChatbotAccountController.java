@@ -98,6 +98,17 @@ public class ChatbotAccountController {
         }
     }
 
+    @ApiOperation(value = "未被通道关联的账号列表", notes = "查询所有未被通道关联的账号列表")
+    @GetMapping("/listUnlinkChannel")
+    public Result listChatbotUnlinkChannel() {
+        try {
+            return Result.OK(chatbotAccountService.listUnlinkChannel());
+        } catch (Exception e) {
+            log.error("/chatbot/list 接口异常：{}", e);
+            return Result.error("查询chatbot账号信息列表失败");
+        }
+    }
+
     @ApiOperation(value = "启用/停用chatbot账号", notes = "启用/停用chatbot账号")
     @PostMapping("/updateStatus")
     public Result updateStatus(@RequestBody ChatbotAccount chatbotAccount) {

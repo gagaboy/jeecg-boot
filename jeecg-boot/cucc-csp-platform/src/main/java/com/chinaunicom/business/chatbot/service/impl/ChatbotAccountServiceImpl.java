@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 /**
  * <p>
  * chatbot账号信息 服务实现类
@@ -31,7 +33,8 @@ public class ChatbotAccountServiceImpl extends ServiceImpl<ChatbotAccountMapper,
     @Override
     public void saveChatbotAccount(ChatbotAccount chatbotAccount) {
         chatbotAccount.setStatus(StatusConstant.STATUS_ENABLED);
-        chatbotAccountMapper.insert(chatbotAccount);
+        int insertCount = chatbotAccountMapper.insert(chatbotAccount);
+        Assert.isTrue(insertCount > 0, "保存chatbot账号信息失败");
     }
 
     @Override
@@ -55,5 +58,10 @@ public class ChatbotAccountServiceImpl extends ServiceImpl<ChatbotAccountMapper,
         chatbotAccount.setStatus(status);
 
         chatbotAccountMapper.updateById(chatbotAccount);
+    }
+
+    @Override
+    public List<ChatbotAccount> listUnlinkChannel() {
+        return chatbotAccountMapper.listUnlinkChannel();
     }
 }

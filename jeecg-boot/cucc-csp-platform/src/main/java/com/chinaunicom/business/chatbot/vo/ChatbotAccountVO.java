@@ -27,7 +27,6 @@ import java.util.Date;
 @ApiModel(value = "ChatbotAccountVO", description = "ChatbotAccountVO")
 public class ChatbotAccountVO {
 
-
     @ApiModelProperty(value = "ID")
     private String chatbotId;
 
@@ -56,7 +55,7 @@ public class ChatbotAccountVO {
     private String city;
 
     @ApiModelProperty(value = "详细地址")
-    private String addres;
+    private String address;
 
     @ApiModelProperty(value = "行业分类")
     private String industry;
@@ -93,6 +92,9 @@ public class ChatbotAccountVO {
 
     @ApiModelProperty(value = "通道名称")
     private String channelName;
+
+    @ApiModelProperty(value = "所属运营商")
+    private String operator;
 
     @ApiModelProperty(value = "创建人")
     private String createBy;

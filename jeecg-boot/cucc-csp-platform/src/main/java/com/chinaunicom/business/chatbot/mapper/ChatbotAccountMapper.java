@@ -7,6 +7,8 @@ import com.chinaunicom.business.chatbot.entity.ChatbotAccount;
 import com.chinaunicom.business.chatbot.vo.ChatbotAccountVO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * chatbot账号信息 Mapper 接口
@@ -24,5 +26,12 @@ public interface ChatbotAccountMapper extends BaseMapper<ChatbotAccount> {
      * @param chatbotAccountVO
      * @return
      */
-    IPage pageList(Page page, @Param("cav")ChatbotAccountVO chatbotAccountVO);
+    IPage<ChatbotAccountVO> pageList(Page page, @Param("cav")ChatbotAccountVO chatbotAccountVO);
+
+    /**
+     * 查询所有未被通道关联的chatbot账号
+     *
+     * @return
+     */
+    List<ChatbotAccount> listUnlinkChannel();
 }

@@ -66,7 +66,7 @@ public class ChatbotAccount extends Model<ChatbotAccount> {
     private String city;
 
     @ApiModelProperty(value = "详细地址")
-    private String addres;
+    private String address;
 
     @NotBlank(message = "未选择行业分类")
     @ApiModelProperty(value = "行业分类")
