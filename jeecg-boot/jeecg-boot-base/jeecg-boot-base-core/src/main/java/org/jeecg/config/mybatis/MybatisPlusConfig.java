@@ -3,11 +3,12 @@ package org.jeecg.config.mybatis;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
@@ -22,17 +23,17 @@ import java.util.List;
 
 /**
  * 单数据源配置（jeecg.datasource.open = false时生效）
- * @Author zhoujf
  *
+ * @Author zhoujf
  */
 @Configuration
-@MapperScan(value={"org.jeecg.modules.**.mapper*","com.chinaunicom.**.mapper*"})
+@MapperScan(value = {"org.jeecg.modules.**.mapper*", "com.chinaunicom.**.mapper*"})
 public class MybatisPlusConfig {
 
     /**
      * tenant_id 字段名
      */
-    public static final String tenant_field = "tenant_id";
+    public static final String tenant_field = "ent_id";
 
     /**
      * 有哪些表需要做多租户 这些表需要添加一个字段 ，字段名和tenant_field对应的值一样
@@ -42,8 +43,11 @@ public class MybatisPlusConfig {
      * ddl 关键字 判断不走多租户的sql过滤
      */
     private static final List<String> DDL_KEYWORD = new ArrayList<String>();
+
     static {
-        tenantTable.add("jee_bug_danbiao");
+        tenantTable.add("chatbot_account");
+        tenantTable.add("channel_info");
+        tenantTable.add("ent_info");
         DDL_KEYWORD.add("alter");
     }
 
@@ -60,9 +64,10 @@ public class MybatisPlusConfig {
 
     /**
      * 多租户的配置
+     *
      * @param paginationInterceptor
      */
-    private void tenantConfig(PaginationInterceptor paginationInterceptor){
+    private void tenantConfig(PaginationInterceptor paginationInterceptor) {
         /*
          * 【测试多租户】 SQL 解析处理拦截器<br>
          * 这里固定写成住户 1 实际情况你可以从cookie读取，因此数据看不到 【 麻花藤 】 这条记录（ 注意观察 SQL ）<br>
@@ -73,9 +78,10 @@ public class MybatisPlusConfig {
 
             @Override
             public Expression getTenantId(boolean select) {
-                String tenant_id = oConvertUtils.getString(TenantContext.getTenant(),"0");
-                return new LongValue(tenant_id);
+                String tenant_id = oConvertUtils.getString(TenantContext.getTenant());
+                return new StringValue(tenant_id);
             }
+
             @Override
             public String getTenantIdColumn() {
                 return tenant_field;
@@ -85,19 +91,19 @@ public class MybatisPlusConfig {
             public boolean doTableFilter(String tableName) {
                 //true则不加租户条件查询  false则加
                 // return excludeTable.contains(tableName);
-                if(tenantTable.contains(tableName)){
+                if (tenantTable.contains(tableName)) {
                     return false;
                 }
                 return true;
             }
 
-            private Expression in(String ids){
+            private Expression in(String ids) {
                 final InExpression inExpression = new InExpression();
                 inExpression.setLeftExpression(new Column(getTenantIdColumn()));
                 final ExpressionList itemsList = new ExpressionList();
                 final List<Expression> inValues = new ArrayList<>(2);
-                for(String id:ids.split(",")){
-                    inValues.add(new LongValue(id));
+                for (String id : ids.split(",")) {
+                    inValues.add(new StringValue(id));
                 }
                 itemsList.setExpressions(inValues);
                 inExpression.setRightItemsList(itemsList);
@@ -111,12 +117,15 @@ public class MybatisPlusConfig {
         paginationInterceptor.setSqlParserFilter(new ISqlParserFilter() {
             @Override
             public boolean doFilter(MetaObject metaObject) {
+                if (StringUtils.isBlank(TenantContext.getTenant())) {
+                    return true;
+                }
                 String sql = (String) metaObject.getValue(PluginUtils.DELEGATE_BOUNDSQL_SQL);
-                for(String tableName: tenantTable){
-                    String sql_lowercase  = sql.toLowerCase();
-                    if(sql_lowercase.indexOf(tableName.toLowerCase())>=0){
-                        for(String key: DDL_KEYWORD){
-                            if(sql_lowercase.indexOf(key)>=0){
+                for (String tableName : tenantTable) {
+                    String sql_lowercase = sql.toLowerCase();
+                    if (sql_lowercase.indexOf(tableName.toLowerCase()) >= 0) {
+                        for (String key : DDL_KEYWORD) {
+                            if (sql_lowercase.indexOf(key) >= 0) {
                                 return true;
                             }
                         }

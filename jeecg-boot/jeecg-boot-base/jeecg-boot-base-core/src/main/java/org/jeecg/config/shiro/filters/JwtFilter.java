@@ -89,8 +89,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             return false;
         }
         //update-begin-author:taoyan date:20200708 for:多租户用到
-        String tenant_id = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
-        TenantContext.setTenant(tenant_id);
+        //修改为自动从登录用户获取
+        //String tenant_id = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
+        //TenantContext.setTenant(tenant_id);
         //update-end-author:taoyan date:20200708 for:多租户用到
         return super.preHandle(request, response);
     }

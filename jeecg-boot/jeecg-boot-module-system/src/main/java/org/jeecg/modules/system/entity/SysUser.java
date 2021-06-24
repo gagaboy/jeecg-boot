@@ -182,4 +182,9 @@ public class SysUser implements Serializable {
 
     /**设备id uniapp推送用*/
     private String clientId;
+
+    /**
+     * 企业ID
+     */
+    private String entId;
 }

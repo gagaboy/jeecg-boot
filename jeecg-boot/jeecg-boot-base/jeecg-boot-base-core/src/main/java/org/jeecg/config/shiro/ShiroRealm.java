@@ -18,6 +18,7 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.RedisUtil;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.TenantContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -97,6 +98,8 @@ public class ShiroRealm extends AuthorizingRealm {
         }
         // 校验token有效性
         LoginUser loginUser = this.checkUserTokenIsEffect(token);
+        //获取当前登录用户企业ID作为多租户过滤条件
+        TenantContext.setTenant(loginUser.getEntId());
         return new SimpleAuthenticationInfo(loginUser, token, getName());
     }
 

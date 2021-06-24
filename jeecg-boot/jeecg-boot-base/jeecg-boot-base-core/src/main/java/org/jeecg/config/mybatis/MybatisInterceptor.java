@@ -107,6 +107,20 @@ public class MybatisInterceptor implements Interceptor {
 							}
 						}
 					}
+					//注入企业编码
+					if (MybatisPlusConfig.tenant_field.equalsIgnoreCase(field.getName())) {
+						field.setAccessible(true);
+						Object local_EntId = field.get(parameter);
+						field.setAccessible(false);
+						if (local_EntId == null || local_EntId.equals("")) {
+							// 获取登录用户信息
+							if (TenantContext.getTenant() != null) {
+								field.setAccessible(true);
+								field.set(parameter, TenantContext.getTenant());
+								field.setAccessible(false);
+							}
+						}
+					}
 				} catch (Exception e) {
 				}
 			}
