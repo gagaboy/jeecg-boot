@@ -1,11 +1,12 @@
 package com.chinaunicom.business.entinfo.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.chinaunicom.constants.StatusConstant;
 import com.chinaunicom.business.entinfo.entity.EntInfo;
 import com.chinaunicom.business.entinfo.service.IEntInfoService;
 import com.chinaunicom.business.entinfo.vo.EntInfoDetailVO;
+import com.chinaunicom.constants.StatusConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,7 @@ public class EntInfoController {
     @PostMapping("/update")
     public Result update(@Valid @RequestBody EntInfoDetailVO entInfoDetail) {
         try {
-            if (StringUtils.isEmpty(entInfoDetail.getEntInfo().getId())) {
+            if (StringUtils.isEmpty(entInfoDetail.getEntInfo().getEntId())) {
                 return Result.error("参数错误");
             }
             entInfoService.updateEntInfo(entInfoDetail);
@@ -72,7 +73,7 @@ public class EntInfoController {
     }
 
 
-    @ApiOperation(value = "列表查询", notes = "查询分页列表信息")
+    @ApiOperation(value = "分页列表查询", notes = "查询分页列表信息")
     @GetMapping("/list")
     public Result list(EntInfo entInfo, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
@@ -84,11 +85,22 @@ public class EntInfoController {
         }
     }
 
+    @ApiOperation(value = "查询所有企业", notes = "查询所有企业")
+    @GetMapping("/listAll")
+    public Result listAll() {
+        try {
+            return Result.OK(entInfoService.list(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getStatus, StatusConstant.STATUS_ENABLED)));
+        } catch (Exception e) {
+            log.error("/entInfo/listAll 接口异常：{}", e);
+            return Result.error("查询所有企业失败");
+        }
+    }
+
     @ApiOperation(value = "启用/停用企业", notes = "启用/停用企业")
     @PostMapping("/updateStatus")
     public Result updateStatus(@RequestBody EntInfo entInfo) {
         try {
-            if (StringUtils.isEmpty(entInfo.getId()) || entInfo.getStatus() == null) {
+            if (StringUtils.isEmpty(entInfo.getEntId()) || entInfo.getStatus() == null) {
                 return Result.error("参数错误");
             }
             if (!checkStatus(entInfo.getStatus())) {

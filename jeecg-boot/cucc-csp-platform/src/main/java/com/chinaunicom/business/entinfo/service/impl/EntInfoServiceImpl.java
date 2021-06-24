@@ -81,14 +81,14 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         Assert.isTrue(num > 0, "保存企业信息失败");
         if (!StringUtils.isEmpty(entInfoVO.getLogoUrl())) {
             EntAttachments entAttachments =
-                    assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.ENT_LOGO, entInfo.getId(),
+                    assembleAttachments(entInfo.getEntId(), EntAttachments.AttachmentFileType.ENT_LOGO, entInfo.getEntId(),
                             entInfoVO.getLogoUrl(), null, StatusConstant.STATUS_ENABLED);
             entAttachmentsList.add(entAttachments);
         }
         if (!StringUtils.isEmpty(entInfoVO.getBizLicUrl())) {
             EntAttachments entAttachments =
-                    assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.ENT_BIZ_LIC,
-                            entInfo.getId(), entInfoVO.getBizLicUrl(), null, StatusConstant.STATUS_ENABLED);
+                    assembleAttachments(entInfo.getEntId(), EntAttachments.AttachmentFileType.ENT_BIZ_LIC,
+                            entInfo.getEntId(), entInfoVO.getBizLicUrl(), null, StatusConstant.STATUS_ENABLED);
             entAttachmentsList.add(entAttachments);
         }
 
@@ -99,18 +99,18 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
                 EntPerson entPerson = new EntPerson();
                 BeanUtils.copyProperties(person, entPerson);
                 entPerson.setFromTime(new Date());
-                entPerson.setEntId(entInfo.getId());
+                entPerson.setEntId(entInfo.getEntId());
                 boolean saveResult = entPersonService.save(entPerson);
                 Assert.isTrue(saveResult, "保存干系人信息出错");
                 if (!StringUtils.isEmpty(person.getIdCardFrontUrl())) {
                     EntAttachments entAttachments =
-                            assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.ID_CARD_FRONT,
+                            assembleAttachments(entInfo.getEntId(), EntAttachments.AttachmentFileType.ID_CARD_FRONT,
                                     entPerson.getId(), person.getIdCardFrontUrl(), null, StatusConstant.STATUS_ENABLED);
                     entAttachmentsList.add(entAttachments);
                 }
                 if (!StringUtils.isEmpty(person.getIdCardBackUrl())) {
                     EntAttachments entAttachments =
-                            assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.ID_CARD_BACK,
+                            assembleAttachments(entInfo.getEntId(), EntAttachments.AttachmentFileType.ID_CARD_BACK,
                                     entPerson.getId(), person.getIdCardBackUrl(), null, StatusConstant.STATUS_ENABLED);
                     entAttachmentsList.add(entAttachments);
                 }
@@ -123,7 +123,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
             contractsVOList.forEach(contracts -> {
                 EntContracts entContracts = new EntContracts();
                 BeanUtils.copyProperties(contracts, entContracts);
-                entContracts.setEntId(entInfo.getId());
+                entContracts.setEntId(entInfo.getEntId());
                 entContracts.setStatus(StatusConstant.STATUS_ENABLED);
                 boolean saveResult = entContractsService.save(entContracts);
                 Assert.isTrue(saveResult, "保存合同信息出错");
@@ -132,7 +132,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
                     contractsUrlList.forEach(contractsUrl -> {
                         if (!StringUtils.isEmpty(contractsUrl)) {
                             EntAttachments entAttachments =
-                                    assembleAttachments(entInfo.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
+                                    assembleAttachments(entInfo.getEntId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
                                             entContracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
                             entAttachmentsList.add(entAttachments);
                         }
@@ -144,7 +144,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         //批量保存企业报备文件信息
         entAttachmentsService.saveBatch(entAttachmentsList);
         //保存企业三网认证信息
-        entCertificationService.saveEntCertificationBatch(entInfo.getId());
+        entCertificationService.saveEntCertificationBatch(entInfo.getEntId());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -152,10 +152,10 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
     public void updateEntInfo(EntInfoDetailVO entInfoDetail) {
         //主体信息变更
         EntInfoVO entInfoVO = entInfoDetail.getEntInfo();
-        EntInfo oldEntInfo = entInfoMapper.selectOne(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getId, entInfoVO.getId()).ne(EntInfo::getStatus, StatusConstant.STATUS_DELETE));
+        EntInfo oldEntInfo = entInfoMapper.selectOne(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getEntId, entInfoVO.getEntId()).ne(EntInfo::getStatus, StatusConstant.STATUS_DELETE));
         Assert.notNull(oldEntInfo, "企业不存在");
         //校验企业编码是否唯一
-        int count = entInfoMapper.selectCount(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getEntCode, entInfoVO.getEntCode()).ne(EntInfo::getId, entInfoVO.getId()));
+        int count = entInfoMapper.selectCount(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getEntCode, entInfoVO.getEntCode()).ne(EntInfo::getEntId, entInfoVO.getEntId()));
         Assert.isTrue(count <= 0, "企业编码已存在");
         BeanUtils.copyProperties(entInfoVO, oldEntInfo);
         int num = entInfoMapper.updateById(oldEntInfo);
@@ -164,7 +164,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         //新插入企业报备文件（logo，执照，身份证正反面，合同等信息）
         List<EntAttachments> newAttachmentsList = new ArrayList<>(4);
 
-        Map<String, List<EntAttachments>> attachmentsMap = getEntAttachmentInfo(entInfoVO.getId());
+        Map<String, List<EntAttachments>> attachmentsMap = getEntAttachmentInfo(entInfoVO.getEntId());
 
         updateEntInfo(entInfoVO, newAttachmentsList, attachmentsMap);
 
@@ -182,7 +182,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
     @Transactional(rollbackFor = Exception.class)
     public void updateEntContracts(EntInfoDetailVO entInfoDetail, EntInfoVO entInfoVO, List<EntAttachments> newAttachmentsList) {
         EntContractsVO contractsVO = entInfoDetail.getEntContractsList().get(0);
-        EntContracts contracts = entContractsService.lambdaQuery().eq(EntContracts::getEntId, entInfoVO.getId()).eq(EntContracts::getStatus, StatusConstant.STATUS_ENABLED).one();
+        EntContracts contracts = entContractsService.lambdaQuery().eq(EntContracts::getEntId, entInfoVO.getEntId()).eq(EntContracts::getStatus, StatusConstant.STATUS_ENABLED).one();
 
         //合同编号相同则视为未变更
         if (contractsVO.getContractCode().equals(contracts.getContractCode())) {
@@ -211,7 +211,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
             if (newContractAttachmentList.size() > 0) {
                 newContractAttachmentList.forEach(contractsUrl -> {
                     if (!StringUtils.isEmpty(contractsUrl)) {
-                        EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
+                        EntAttachments entAttachments = assembleAttachments(entInfoVO.getEntId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
                                 contracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
                         newAttachmentsList.add(entAttachments);
                     }
@@ -225,7 +225,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
             //新增合同
             EntContracts entContracts = new EntContracts();
             BeanUtils.copyProperties(contractsVO, entContracts);
-            entContracts.setEntId(entInfoVO.getId());
+            entContracts.setEntId(entInfoVO.getEntId());
             entContracts.setStatus(StatusConstant.STATUS_ENABLED);
             boolean saveResult = entContractsService.save(entContracts);
             Assert.isTrue(saveResult, "保存合同信息出错");
@@ -237,7 +237,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
             Assert.isTrue(updateResult, "更新合同附件失败");
             contractsVO.getContractsUrlList().forEach(contractsUrl -> {
                 if (!StringUtils.isEmpty(contractsUrl)) {
-                    EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
+                    EntAttachments entAttachments = assembleAttachments(entInfoVO.getEntId(), EntAttachments.AttachmentFileType.CONTRACT_FILE,
                             entContracts.getId(), contractsUrl, null, StatusConstant.STATUS_ENABLED);
                     newAttachmentsList.add(entAttachments);
                 }
@@ -249,7 +249,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
     public void updateEntPerson(EntInfoDetailVO entInfoDetail, EntInfoVO entInfoVO, List<EntAttachments> newAttachmentsList, Map<String, List<EntAttachments>> attachmentsMap) {
         List<EntPersonVO> entPersonVOList = entInfoDetail.getEntPersonList();
         //判断企业干系人是否变更
-        List<EntPerson> personList = entPersonService.lambdaQuery().eq(EntPerson::getEntId, entInfoVO.getId()).isNull(EntPerson::getThruTime).list();
+        List<EntPerson> personList = entPersonService.lambdaQuery().eq(EntPerson::getEntId, entInfoVO.getEntId()).isNull(EntPerson::getThruTime).list();
         personList.forEach(person -> {
             entPersonVOList.forEach(entPersonVO -> {
                 if (person.getPersonType().equals(entPersonVO.getPersonType())) {
@@ -288,19 +288,19 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
                         EntPerson entPerson = new EntPerson();
                         BeanUtils.copyProperties(entPersonVO, entPerson);
                         entPerson.setFromTime(new Date());
-                        entPerson.setEntId(entInfoVO.getId());
+                        entPerson.setEntId(entInfoVO.getEntId());
                         boolean saveResult = entPersonService.save(entPerson);
                         Assert.isTrue(saveResult, "保存干系人信息出错");
                         personId = entPerson.getId();
                     }
 
                     if (newIdCardFront) {
-                        EntAttachments idCardFrontAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.ID_CARD_FRONT,
+                        EntAttachments idCardFrontAttachments = assembleAttachments(entInfoVO.getEntId(), EntAttachments.AttachmentFileType.ID_CARD_FRONT,
                                 personId, entPersonVO.getIdCardFrontUrl(), null, StatusConstant.STATUS_ENABLED);
                         newAttachmentsList.add(idCardFrontAttachments);
                     }
                     if (newIdCardBack) {
-                        EntAttachments idCardBackAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.ID_CARD_BACK,
+                        EntAttachments idCardBackAttachments = assembleAttachments(entInfoVO.getEntId(), EntAttachments.AttachmentFileType.ID_CARD_BACK,
                                 personId, entPersonVO.getIdCardBackUrl(), null, StatusConstant.STATUS_ENABLED);
                         newAttachmentsList.add(idCardBackAttachments);
                     }
@@ -312,25 +312,25 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
     @Transactional(rollbackFor = Exception.class)
     public void updateEntInfo(EntInfoVO entInfoVO, List<EntAttachments> newAttachmentsList, Map<String, List<EntAttachments>> attachmentsMap) {
         //判断企业logo及营业执照是否变更
-        EntAttachments logoAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_LOGO + ":" + entInfoVO.getId()).get(0);
+        EntAttachments logoAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_LOGO + ":" + entInfoVO.getEntId()).get(0);
         if (!entInfoVO.getLogoUrl().equals(logoAttachments.getLocalUrl())) {
             //logo已变更
             logoAttachments.setStatus(StatusConstant.STATUS_DISABLED);
             boolean result = entAttachmentsService.updateById(logoAttachments);
             Assert.isTrue(result, "更新企业LOGO失败");
 
-            EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.ENT_LOGO, entInfoVO.getId(),
+            EntAttachments entAttachments = assembleAttachments(entInfoVO.getEntId(), EntAttachments.AttachmentFileType.ENT_LOGO, entInfoVO.getEntId(),
                     entInfoVO.getLogoUrl(), null, StatusConstant.STATUS_ENABLED);
             newAttachmentsList.add(entAttachments);
         }
-        EntAttachments bizLicAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_BIZ_LIC + ":" + entInfoVO.getId()).get(0);
+        EntAttachments bizLicAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_BIZ_LIC + ":" + entInfoVO.getEntId()).get(0);
         if (!entInfoVO.getBizLicUrl().equals(bizLicAttachments.getLocalUrl())) {
             //营业执照已变更
             bizLicAttachments.setStatus(StatusConstant.STATUS_DISABLED);
             boolean result = entAttachmentsService.updateById(bizLicAttachments);
             Assert.isTrue(result, "更新企业营业执照信息失败");
 
-            EntAttachments entAttachments = assembleAttachments(entInfoVO.getId(), EntAttachments.AttachmentFileType.ENT_BIZ_LIC, entInfoVO.getId(),
+            EntAttachments entAttachments = assembleAttachments(entInfoVO.getEntId(), EntAttachments.AttachmentFileType.ENT_BIZ_LIC, entInfoVO.getEntId(),
                     entInfoVO.getBizLicUrl(), null, StatusConstant.STATUS_ENABLED);
             newAttachmentsList.add(entAttachments);
         }
@@ -338,7 +338,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
 
     @Override
     public void updateStatus(EntInfo entInfo) {
-        EntInfo existEntInfo = entInfoMapper.selectById(entInfo.getId());
+        EntInfo existEntInfo = entInfoMapper.selectById(entInfo.getEntId());
         Assert.notNull(existEntInfo, "企业不存在");
         existEntInfo.setStatus(entInfo.getStatus());
         entInfoMapper.updateById(existEntInfo);
@@ -354,7 +354,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         EntInfoDetailVO entInfoDetailVO = new EntInfoDetailVO();
 
         //获取企业基本信息
-        EntInfo entInfo = entInfoMapper.selectOne(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getId, entId).ne(EntInfo::getStatus, StatusConstant.STATUS_DELETE));
+        EntInfo entInfo = entInfoMapper.selectOne(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getEntId, entId).ne(EntInfo::getStatus, StatusConstant.STATUS_DELETE));
         Assert.notNull(entInfo, "企业信息不存在");
 
         Map<String, List<EntAttachments>> attachmentsMap = getEntAttachmentInfo(entId);
@@ -387,11 +387,11 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
     private EntInfoVO assembleEntInfo(EntInfo entInfo, Map<String, List<EntAttachments>> attachmentsMap) {
         EntInfoVO entInfoVO = new EntInfoVO();
         BeanUtils.copyProperties(entInfo, entInfoVO);
-        List<EntAttachments> bizLicAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_BIZ_LIC + ":" + entInfo.getId());
+        List<EntAttachments> bizLicAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_BIZ_LIC + ":" + entInfo.getEntId());
         if (!CollectionUtils.isEmpty(bizLicAttachments)) {
             entInfoVO.setBizLicUrl(bizLicAttachments.get(0).getLocalUrl());
         }
-        List<EntAttachments> logoAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_LOGO + ":" + entInfo.getId());
+        List<EntAttachments> logoAttachments = attachmentsMap.get(EntAttachments.AttachmentFileType.ENT_LOGO + ":" + entInfo.getEntId());
         if (!CollectionUtils.isEmpty(logoAttachments)) {
             entInfoVO.setLogoUrl(logoAttachments.get(0).getLocalUrl());
         }
@@ -407,7 +407,7 @@ public class EntInfoServiceImpl extends ServiceImpl<EntInfoMapper, EntInfo> impl
         if (normIndustry != null) {
             entInfoVO.setIndustryName(normIndustry.getName());
         }
-        List<EntCertification> certificationList = entCertificationService.lambdaQuery().eq(EntCertification::getEntId, entInfo.getId()).list();
+        List<EntCertification> certificationList = entCertificationService.lambdaQuery().eq(EntCertification::getEntId, entInfo.getEntId()).list();
         if (!CollectionUtils.isEmpty(certificationList)) {
             entInfoVO.setEntCertificationList(certificationList);
         }

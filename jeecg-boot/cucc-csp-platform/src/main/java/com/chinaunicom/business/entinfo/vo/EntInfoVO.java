@@ -19,7 +19,7 @@ import java.util.List;
 public class EntInfoVO {
 
     @ApiModelProperty(value = "企业信息表主键id")
-    private String id;
+    private String entId;
 
     @NotBlank(message = "企业编码不能为空")
     @ApiModelProperty(value = "企业编码")

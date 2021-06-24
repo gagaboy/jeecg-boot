@@ -32,8 +32,8 @@ public class EntInfo extends Model<EntInfo> {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "企业信息表主键id")
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
+    @TableId(value = "ent_id", type = IdType.ASSIGN_ID)
+    private String entId;
 
     @ApiModelProperty(value = "企业编码")
     private String entCode;
@@ -97,7 +97,7 @@ public class EntInfo extends Model<EntInfo> {
 
     @Override
     protected Serializable pkVal() {
-        return this.id;
+        return this.entId;
     }
 
 }
