@@ -73,7 +73,7 @@ public class ServiceRegionController {
         }
     }
 
-    @ApiOperation(value = "列表查询", notes = "查询分页列表信息")
+    @ApiOperation(value = "分页列表查询", notes = "查询分页列表信息")
     @GetMapping("/list")
     public Result list(ServiceRegionVO serviceRegionVO, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
@@ -82,6 +82,17 @@ public class ServiceRegionController {
         } catch (Exception e) {
             log.error("/serviceRegion/list 接口异常：{}", e);
             return Result.error("查询服务大区列表失败");
+        }
+    }
+
+    @ApiOperation(value = "获取全部服务大区", notes = "获取全部服务大区")
+    @GetMapping("/listAll")
+    public Result listAll() {
+        try {
+            return Result.OK(serviceRegionService.list(new LambdaQueryWrapper<>(ServiceRegion.class).eq(ServiceRegion::getStatus, StatusConstant.STATUS_ENABLED)));
+        } catch (Exception e) {
+            log.error("/serviceRegion/listAll 接口异常：{}", e);
+            return Result.error("获取全部服务大区失败");
         }
     }
 

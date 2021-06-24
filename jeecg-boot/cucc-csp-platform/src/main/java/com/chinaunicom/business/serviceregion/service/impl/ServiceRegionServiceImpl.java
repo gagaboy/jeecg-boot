@@ -52,7 +52,8 @@ public class ServiceRegionServiceImpl extends ServiceImpl<ServiceRegionMapper, S
         serviceRegion.setServiceRegionCode(serviceRegionCode);
         serviceRegion.setStatus(StatusConstant.STATUS_ENABLED);
 
-        serviceRegionMapper.insert(serviceRegion);
+        int insertCount = serviceRegionMapper.insert(serviceRegion);
+        Assert.isTrue(insertCount > 0, "保存服务大区信息失败");
     }
 
     @Override

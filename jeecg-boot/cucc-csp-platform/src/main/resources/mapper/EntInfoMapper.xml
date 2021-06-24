@@ -6,7 +6,7 @@
     <select id="pageList" resultType="com.chinaunicom.business.entinfo.vo.EntInfoVO">
         SELECT ei.*, ea.local_url as logoUrl, ni.name as industryName, sa1.name as provinceName, sa2.name as cityName
         FROM ent_info ei
-        INNER JOIN ent_attachments ea ON ei.id = ea.ent_id AND ea.file_type = 'ent_logo' AND ea.status = '0'
+        INNER JOIN ent_attachments ea ON ei.ent_id = ea.ent_id AND ea.file_type = 'ent_logo' AND ea.status = '0'
         LEFT JOIN norm_industry ni ON ei.industry = ni.code
         LEFT JOIN sys_area sa1 ON ei.province = sa1.id
         LEFT JOIN sys_area sa2 ON ei.city = sa2.id
@@ -26,22 +26,26 @@
 -->
 
     <resultMap id="EntInfoMap" type="com.chinaunicom.business.entinfo.vo.EntInfoVO">
-        <id property="id" column="id"/>
+        <id property="entId" column="ent_id"/>
         <result property="entName" column="ent_name"/>
         <result property="abbrName" column="abbr_name"/>
         <result property="entCode" column="ent_code"/>
         <result property="logoUrl" column="logo_url"/>
         <result property="entGrade" column="ent_grade"/>
         <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
 
-        <collection property="entCertificationList" ofType="com.chinaunicom.business.entinfo.entity.EntCertification" select="queryCertificationList" column="id">
+        <collection property="entCertificationList" ofType="com.chinaunicom.business.entinfo.entity.EntCertification" select="queryCertificationList" column="ent_id">
         </collection>
     </resultMap>
 
     <select id="pageList" resultMap="EntInfoMap">
-        SELECT ei.id, ei.ent_name, ei.abbr_name, ei.ent_code, ei.ent_grade, ei.status, ea.local_url as logo_url
+        SELECT ei.*, ea.local_url as logo_url
         FROM ent_info ei
-        INNER JOIN ent_attachments ea ON ei.id = ea.ent_id AND ea.file_type = 'ent_logo' AND ea.status = '0'
+        INNER JOIN ent_attachments ea ON ei.ent_id = ea.ent_id AND ea.file_type = 'ent_logo' AND ea.status = '0'
         <where>
             <if test="entInfo.entName != null and entInfo.entName != ''">
                 AND ei.ent_name like CONCAT("%", #{entInfo.entName},"%")
@@ -85,6 +89,6 @@
     </select>
 
     <select id="queryCertificationList" resultType="com.chinaunicom.business.entinfo.entity.EntCertification">
-        select id, ent_id, operator, status from ent_certification WHERE ent_id = #{id} AND thru_time is null
+        select id, ent_id, operator, status from ent_certification WHERE ent_id = #{ent_id} AND thru_time is null
     </select>
 </mapper>
