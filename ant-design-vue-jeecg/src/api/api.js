@@ -110,6 +110,14 @@ const addServiceRegion = (params) => postAction("/serviceRegion/save", params);
 const updateServiceRegion = (params) => postAction("/serviceRegion/update", params);
 const deleteServiceRegion = (params) => deleteAction("/serviceRegion/delete", params);
 
+// 通道管理
+const channelList = (params) => getAction("/channel/list", params);
+const channelTypeList = (params) => getAction("/channel/channelTypeList", params);
+const listUnlinkChannel = (params) => getAction("/chatbot/listUnlinkChannel", params);
+const addChannel = (params) => postAction("/channel/save", params);
+const updateChannel = (params) => postAction("/channel/update", params);
+const deleteChannel = (params) => deleteAction("/channel/deleteById", params);
+
 // 中转HTTP请求
 export const transitRESTful = {
     get: (url, parameter) => getAction(getTransitURL(url), parameter),
@@ -190,5 +198,11 @@ export {
     addServiceRegion,
     forIDserviceRegion,
     updateServiceRegion,
-    deleteServiceRegion
+    deleteServiceRegion,
+    channelList,
+    channelTypeList,
+    listUnlinkChannel,
+    addChannel,
+    updateChannel,
+    deleteChannel
 }

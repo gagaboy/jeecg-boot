@@ -65,14 +65,14 @@
           </a-form>
         </div>
       </a-card>
-      <a-card>
+      <a-card style="margin-top: 20px">
         <div class="table-operator">
           <a-button type="primary" icon="plus" @click="showDrawer">新建</a-button>
         </div>
         <a-table
           :columns="columns"
           :data-source="data"
-          :rowKey="(record) => record.id"
+          :rowKey="(record) => record.entId"
           :pagination="page"
           @change="pageChange"
           table-layout="fixed"
@@ -94,9 +94,9 @@
             <span v-if="row == 3">标准级</span>
           </span>
           <span slot="action" slot-scope="row">
-            <a @click="showEditVisible(row.id)">编辑</a>
+            <a @click="showEditVisible(row.entId)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="showModal(row.id)">查看</a>
+            <a @click="showModal(row.entId)">查看</a>
             <a-divider type="vertical" />
             <a>认证</a>
             <a-divider type="vertical" />
@@ -350,7 +350,7 @@ export default {
       } else {
         row.status = 0
       }
-      updateStatus({ id: row.id, status: row.status }).then((res) => {
+      updateStatus({ id: row.entId, status: row.status }).then((res) => {
         console.log(res)
       })
     },

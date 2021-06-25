@@ -20,7 +20,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '联通CSP平台',
+      default: '5G消息运营平台',
       required: false,
     },
     showTitle: {

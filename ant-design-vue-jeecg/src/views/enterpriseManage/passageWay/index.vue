@@ -1,159 +1,110 @@
 <template>
-  <a-card :bordered="false">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
-            <a-form-item label="企业名称">
-              <a-input v-model="queryParam.id" placeholder="" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="通道名称">
-              <a-input v-model="queryParam.id" placeholder="" />
-            </a-form-item>
-          </a-col>
-
-          <template v-if="advanced">
+  <div :bordered="false">
+    <a-card>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="通道类型">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
-                </a-select>
+              <a-form-item label="企业名称">
+                <a-input v-model="queryParam.entName" placeholder="请输入企业名称" />
               </a-form-item>
             </a-col>
-          </template>
-          <a-col :md="(!advanced && 8) || 24" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary">查询</a-button>
-              <a-button style="margin-left: 8px" @click="resetSearchForm">重置</a-button>
-              <a @click="toggleAdvanced" style="margin-left: 8px">
-                {{ advanced ? '收起' : '展开' }}
-                <a-icon :type="advanced ? 'up' : 'down'" />
-              </a>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="通道名称">
+                <a-input v-model="queryParam.channelName" placeholder="请输入通道名称" />
+              </a-form-item>
+            </a-col>
 
-    <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="() => this.handleModalVisible(true)">新建</a-button>
-    </div>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="通道类型">
+                  <a-select placeholder="请选择" v-model="queryParam.channelType">
+                    <a-select-option :value="item.id" v-for="(item, index) in channelTypeListData" :key="index">{{
+                      item.itemText
+                    }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary" @click="getChannelList(1)">查询</a-button>
+                <a-button style="margin-left: 8px" @click="resetSearchForm">重置</a-button>
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? '收起' : '展开' }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+    </a-card>
 
-    <a-table
-      ref="table"
-      size="default"
-      :rowKey="(record) => record.id"
-      :columns="columns"
-      :data="loadData"
-      @onSelect="onChange"
-    >
-      <span slot="action" slot-scope="text, record">
-        <a @click="handleEdit(record)">编辑</a>
-        <a-divider type="vertical" />
-        <a>删除</a>
-      </span>
-    </a-table>
+    <a-card style="margin-top: 20px">
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="() => this.handleModalVisible(true)">新建</a-button>
+      </div>
 
-    <a-modal title="编辑" :width="800" v-model="visible" @ok="handleOk">
-      <a-form
-        :autoFormCreate="
-          (form) => {
-            this.form = form
-          }
-        "
+      <a-table
+        ref="table"
+        size="default"
+        :rowKey="(record) => record.channelId"
+        :columns="columns"
+        :data="channelListData"
+        :data-source="channelListData"
+        @onSelect="onChange"
+        :pagination="page"
+        @change="pageChange"
       >
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="规则编号"
-          hasFeedback
-          validateStatus="success"
-        >
-          <a-input placeholder="规则编号" v-model="mdl.no" id="no" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="服务调用次数"
-          hasFeedback
-          validateStatus="success"
-        >
-          <a-input-number :min="1" id="callNo" v-model="mdl.callNo" style="width: 100%" />
-        </a-form-item>
-
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="状态" hasFeedback validateStatus="warning">
-          <a-select defaultValue="1" v-model="mdl.status">
-            <a-select-option value="1">Option 1</a-select-option>
-            <a-select-option value="2">Option 2</a-select-option>
-            <a-select-option value="3">Option 3</a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="描述" hasFeedback help="请填写一段描述">
-          <a-textarea :rows="5" v-model="mdl.description" placeholder="..." id="description" />
-        </a-form-item>
-
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="更新时间" hasFeedback validateStatus="error">
-          <a-date-picker style="width: 100%" showTime format="YYYY-MM-DD HH:mm:ss" placeholder="Select Time" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+        <span slot="chatbotAccountList" slot-scope="record">
+          <div v-for="(item, index) in record" :key="index">{{ index + 1 + '. ' + item.chatbotName }}</div>
+        </span>
+        <span slot="action" slot-scope="text, record">
+          <a @click="handleEdit(record)">编辑</a>
+          <a-divider type="vertical" />
+          <a style="color: #ff4d4f" @click="deleteItem(record.channelId)">删除</a>
+        </span>
+      </a-table>
+    </a-card>
 
     <a-modal
-      title="新建规则"
+      :title="title"
       destroyOnClose
+      :width="800"
       :visible="visibleCreateModal"
+      :footer="null"
       @ok="handleCreateModalOk"
       @cancel="handleCreateModalCancel"
     >
-      <!---->
-      <!-- <a-form
-        style="margin-top: 8px"
-        :autoFormCreate="
-          (form) => {
-            this.createForm = form
-          }
-        "
-      >
-        <a-form-item
-          :labelCol="{ span: 5 }"
-          :wrapperCol="{ span: 15 }"
-          label="描述"
-          fieldDecoratorId="description"
-          :fieldDecoratorOptions="{ rules: [{ required: true, message: '请输入至少五个字符的规则描述！', min: 5 }] }"
-        >
-          <a-input placeholder="请输入" />
-        </a-form-item>
-      </a-form> -->
+      <add-passage-way :editId="editId" @close="handleCreateModalCancel"></add-passage-way>
     </a-modal>
-  </a-card>
+  </div>
 </template>
 
 <script>
-// import STable from '@/components/table/'
-import ATextarea from 'ant-design-vue/es/input/TextArea'
-import AInput from 'ant-design-vue/es/input/Input'
-import moment from 'moment'
-import axios from 'axios'
-import { getRoleList, getServiceList } from '@/api/manage'
-
+import { channelList, deleteChannel, channelTypeList } from '@/api/api'
+import AddPassageWay from './addPassageWay'
 export default {
   name: 'passageWay',
   components: {
-    AInput,
-    ATextarea,
-    // STable,
+    AddPassageWay,
   },
   data() {
     return {
+      page: {
+        current: 1,
+        total: 100,
+        pageSize: 10,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        showTotal: (total) => `共 ${total} 条`,
+        defaultCurrent: 1,
+      },
+      title: '新建通道信息',
       visibleCreateModal: false,
       visible: false,
       labelCol: {
@@ -175,28 +126,27 @@ export default {
       columns: [
         {
           title: '企业Logo',
-          dataIndex: 'no',
+          dataIndex: 'entLogoUrl',
         },
         {
           title: '企业名称',
-          dataIndex: 'description',
+          dataIndex: 'entName',
         },
         {
           title: '通道名称',
-          dataIndex: 'callNo',
-          sorter: true,
+          dataIndex: 'channelName',
+
           needTotal: true,
-          customRender: (text) => text + ' 次',
         },
         {
           title: '通道类型',
-          dataIndex: 'status',
+          dataIndex: 'channelTypeName',
           needTotal: true,
         },
         {
           title: '关联账号',
-          dataIndex: 'updatedAt',
-          sorter: true,
+          dataIndex: 'chatbotAccountList',
+          scopedSlots: { customRender: 'chatbotAccountList' },
         },
         {
           title: '操作',
@@ -205,30 +155,49 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getServiceList(Object.assign(parameter, this.queryParam)).then((res) => {
-          return res.result
-        })
-      },
 
       selectedRowKeys: [],
       selectedRows: [],
+      channelListData: [],
+      editId: null,
+      channelTypeListData: [],
     }
   },
   created() {
-    getRoleList({ t: new Date() })
+    this.getChannelList()
+    this.getChannelTypeList()
   },
   methods: {
+    getChannelTypeList() {
+      channelTypeList().then((res) => {
+        this.channelTypeListData = res.result
+      })
+    },
+    getChannelList(data) {
+      if (data == 1) {
+        this.queryParam.pageNo = 1
+      } else {
+        this.queryParam.pageSize = this.page.pageSize
+        this.queryParam.pageNo = this.page.current
+      }
+      channelList(this.queryParam).then((res) => {
+        console.log(res)
+        this.channelListData = res.result.records
+        this.page.total = res.result.total
+      })
+    },
     handleEdit(record) {
-      this.mdl = Object.assign({}, record)
-      console.log(this.mdl)
-      this.visible = true
+      console.log(record)
+      this.editId = record
+      this.title = '编辑通道信息'
+      this.visibleCreateModal = true
     },
     handleOk() {},
 
     //添加逻辑
     handleModalVisible(isVisible) {
+      this.editId = null
+      this.title = '新建通道信息'
       this.visibleCreateModal = isVisible
     },
     handleCreateModalOk() {
@@ -250,6 +219,8 @@ export default {
     },
     handleCreateModalCancel() {
       this.visibleCreateModal = false
+      this.editId = null
+      this.getChannelList()
     },
 
     onChange(row) {
@@ -263,9 +234,33 @@ export default {
     },
 
     resetSearchForm() {
-      this.queryParam = {
-        date: moment(new Date()),
-      }
+      this.queryParam = {}
+    },
+    getDeleteChannel(channelId) {
+      deleteChannel({ channelId: channelId }).then((res) => {
+        console.log(res)
+        this.getChannelList()
+      })
+    },
+    deleteItem(channelId) {
+      let _this = this
+      this.$confirm({
+        title: '确定删除这条数据吗?',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk() {
+          _this.getDeleteChannel(channelId)
+        },
+        onCancel() {
+          console.log('Cancel')
+        },
+      })
+    },
+    pageChange(page) {
+      this.page.current = page.current
+      this.page.pageSize = page.pageSize
+      this.getChannelList()
     },
   },
   watch: {
