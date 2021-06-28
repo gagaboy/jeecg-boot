@@ -1,0 +1,163 @@
+/*公共的class*/
+ul, li, p, label {
+	list-style: none;
+	padding:0;
+	margin: 0;
+}
+
+.draw-upload-title {
+	padding:0 !important;
+	margin: 0 !important;
+}
+
+.draw-flex-center {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.draw-text-two {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	/* autoprefixer: off */
+	-webkit-box-orient: vertical;
+	/* autoprefixer: on */
+	-webkit-line-clamp: 2;
+	/*0508新增换行*/
+	white-space:pre-wrap;
+	word-break:break-word;
+	overflow:hidden;
+}
+
+
+/*编辑*/
+
+.draw-preview-cover:hover {
+	background-color: rgba(67, 129, 230, 0.2);
+}
+
+
+/*蒙层的样式*/
+
+.draw-preview-cover {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	display: none;
+}
+
+.draw-preview-cover:hover>img {
+	display: block;
+	cursor: pointer;
+}
+
+.draw-preview-cover>img {
+	display: none;
+	width: 60px;
+	height: 60px;
+	margin: 0 auto !important;
+}
+
+
+/*新增移上去显示手势*/
+.draw-cursor-pointer {
+	/*移上去显示手指*/
+	cursor: pointer;
+}
+
+
+/*统一按钮样式-已修改*/
+
+.draw-pop-footer {
+	display: flex;
+	justify-content: flex-end;
+}
+
+
+/*统一按钮样式*/
+
+.draw-remove-button {
+	width: 90px;
+	height: 36px;
+	line-height: 36px;
+	border-radius: 4px;
+	font-size: 14px;
+	padding: 0;
+	margin: 0;
+	margin-right: 24px;
+}
+
+.draw-borderbottom {
+	border-bottom: 1px solid #EBEEF5;
+}
+
+.cat-draw-emoji .ant-popover-inner-content{
+		padding: 0px !important;
+}
+
+/*新增多卡图片统一样式*/
+.draw-cat-more-card-img {
+	object-fit: cover;
+}
+
+/*--------0814提取的公共样式------*/
+.draw-side-menu {
+		background: #fff;
+}
+.draw-side-menu input{
+	resize: none;
+
+}
+
+/*新建节点*/
+.draw-side-menu-node {
+	height: 58px;
+	padding: 0 24px;
+	justify-content: space-between;
+}
+
+.draw-side-menu-node-txt {
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.draw-side-menu-node-card {
+	width: 352px;
+	height: 56px;
+	background: rgba(255, 255, 255, 1);
+	box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.1), 0px 0px 8px 0px rgba(0, 0, 0, 0.05);
+	border-radius: 4px;
+	margin: 0 auto;
+	justify-content: flex-start;
+	padding: 0 16px;
+}
+
+/*catDrawMenuAsk*/
+.draw-side-menu-trigger {
+	padding: 0 24px;
+  position: relative;
+}
+
+.draw-side-menu-trigger-title {
+	font-size: 14px;
+	margin: 24px 0 8px 0;
+}
+
+/*0824修改引用弹窗样式*/
+.cat-draw-poppip .ant-popover-inner-content {
+	overflow: auto;
+	max-height: 300px;
+}
+
+/*设置font-size*/
+.draw-drawer-content, .draw-drawer-content .ant-select, .draw-drawer-content .ant-select-dropdown-menu-item, .draw-drawer-content .add-content, .draw-drawer-content .ant-input, .draw-drawer-content .ant-drawer-body {
+	font-size: 12px;
+}
+

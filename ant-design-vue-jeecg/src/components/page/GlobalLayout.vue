@@ -53,10 +53,11 @@
       </a-drawer>
     </template>
 
-    <a-layout
+    <!-- <a-layout
       :class="[layoutMode, `content-width-${contentWidth}`]"
       :style="{ paddingLeft: fixSiderbar && isDesktop() ? `${sidebarOpened ? 200 : 80}px` : '0' }"
-    >
+    > -->
+    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]">
       <!-- layout header -->
       <global-header
         :mode="layoutMode"
@@ -295,7 +296,7 @@ body {
       transition: width 0.2s;
 
       &.ant-header-side-opened {
-        width: calc(100% - 200px);
+        width: calc(100% - 238px);
       }
 
       &.ant-header-side-closed {
