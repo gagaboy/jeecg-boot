@@ -1,320 +1,322 @@
 
 <template>
   <div>
-    <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-steps :current="current">
-        <a-step v-for="item in steps" :key="item.title" :title="item.title" />
-      </a-steps>
+    <a-card>
+      <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-steps :current="current">
+          <a-step v-for="item in steps" :key="item.title" :title="item.title" />
+        </a-steps>
 
-      <div style="margin-top: 30px" v-show="current == 0">
-        <a-row class="form-row" :gutter="16">
-          <a-col :span="12">
-            <a-form-model-item label="企业全称" prop="entName">
-              <a-input placeholder="请输入企业全称" v-model="form.entName" />
-            </a-form-model-item>
-            <a-form-model-item label="企业地址" prop="addressValue">
-              <a-cascader
-                v-model="form.addressValue"
-                :field-names="{ label: 'name', value: 'id', children: 'children' }"
-                :options="options"
-                placeholder="请选择企业地址"
-                @change="addressChange"
-              />
-            </a-form-model-item>
-            <a-form-model-item label="详细地址" prop="address">
-              <a-input v-model="form.address" placeholder="请输入详细地址" />
-            </a-form-model-item>
-            <a-form-model-item label="企业电话" prop="entPhone">
-              <a-input placeholder="请输入企业电话" v-model="form.entPhone" />
-            </a-form-model-item>
-            <a-form-model-item label="企业LOGO">
-              <a-upload
-                name="file"
-                list-type="picture-card"
-                class="avatar-uploader"
-                accept=".jpg,.png"
-                :show-upload-list="false"
-                :action="uploadUrl"
-                :before-upload="beforeUpload"
-                @change="(e) => handleChange(e, 'logo')"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <img v-if="form.logoUrl" :src="form.logoUrl" alt="avatar" style="width: 128px; height: 128px" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                </div>
-              </a-upload>
-            </a-form-model-item>
-            <a-form-model-item label="企业营业执照">
-              <a-upload
-                name="file"
-                list-type="picture-card"
-                class="avatar-uploader"
-                accept=".jpg,.png"
-                :show-upload-list="false"
-                :before-upload="before"
-                :action="uploadUrl"
-                @change="(e) => handleChange(e, 'license')"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <img v-if="form.bizLicUrl" :src="form.bizLicUrl" alt="avatar" style="width: 128px; height: 128px" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                </div>
-              </a-upload>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="企业简称" prop="abbrName">
-              <a-input placeholder="请输入企业简称" v-model="form.abbrName" />
-            </a-form-model-item>
-            <a-form-model-item label="企业编码" prop="entCode">
-              <a-input placeholder="请输入企业编码" v-model="form.entCode" />
-            </a-form-model-item>
-            <a-form-model-item label="所属行业" prop="industryList">
-              <a-cascader
-                v-model="form.industryList"
-                :field-names="{ label: 'name', value: 'id', children: 'children' }"
-                :options="industryOptions"
-                placeholder="请选择所属行业"
-                @change="industryChange"
-              />
-            </a-form-model-item>
-            <a-form-model-item label="企业等级" prop="abbrName">
-              <a-radio-group v-model="form.entGrade" @change="entGradeChange">
-                <a-radio :value="item.value" v-for="(item, index) in entGradeList" :key="index">
-                  {{ item.name }}
-                </a-radio>
-              </a-radio-group>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-      </div>
-    </a-form-model>
-    <a-form-model
-      ref="ruleformPerson"
-      :model="formPerson"
-      :rules="rules"
-      :label-col="labelCol"
-      :wrapper-col="wrapperCol"
-    >
-      <div style="margin-top: 30px" v-show="current == 1">
-        <a-row class="form-row" :gutter="16">
-          <a-col :span="12">
-            <a-form-model-item label="联系人姓名" prop="name">
-              <a-input placeholder="请输入联系人姓名" v-model="formPerson.name" />
-            </a-form-model-item>
-
-            <a-form-model-item label="联系人手机号" prop="phone">
-              <a-input v-model="formPerson.phone" placeholder="请输入联系人手机号" />
-            </a-form-model-item>
-
-            <a-form-model-item label="身份证正面">
-              <a-upload
-                name="file"
-                list-type="picture-card"
-                class="avatar-uploader"
-                accept=".jpg,.png"
-                :show-upload-list="false"
-                :before-upload="before"
-                :action="uploadUrl"
-                @change="(e) => handleChange(e, 'contactIdFront')"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <img
-                  v-if="formPerson.idCardFrontUrl"
-                  :src="formPerson.idCardFrontUrl"
-                  alt="avatar"
-                  style="width: 128px; height: 128px"
+        <div style="margin-top: 30px" v-show="current == 0">
+          <a-row class="form-row" :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item label="企业全称" prop="entName">
+                <a-input placeholder="请输入企业全称" v-model="form.entName" />
+              </a-form-model-item>
+              <a-form-model-item label="企业地址" prop="addressValue">
+                <a-cascader
+                  v-model="form.addressValue"
+                  :field-names="{ label: 'name', value: 'id', children: 'children' }"
+                  :options="options"
+                  placeholder="请选择企业地址"
+                  @change="addressChange"
                 />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                </div>
-              </a-upload>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="联系人身份证号" prop="idCard">
-              <a-input v-model="formPerson.idCard" placeholder="请输入联系人身份证号" />
-            </a-form-model-item>
-            <a-form-model-item label="联系人邮箱" prop="email">
-              <a-input v-model="formPerson.email" placeholder="请输入联系人邮箱" />
-            </a-form-model-item>
-
-            <a-form-model-item label="身份证反面">
-              <a-upload
-                name="file"
-                list-type="picture-card"
-                class="avatar-uploader"
-                accept=".jpg,.png"
-                :show-upload-list="false"
-                :before-upload="before"
-                :action="uploadUrl"
-                @change="(e) => handleChange(e, 'contactIdBack')"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <img
-                  v-if="formPerson.idCardBackUrl"
-                  :src="formPerson.idCardBackUrl"
-                  alt="avatar"
-                  style="width: 128px; height: 128px"
+              </a-form-model-item>
+              <a-form-model-item label="详细地址" prop="address">
+                <a-input v-model="form.address" placeholder="请输入详细地址" />
+              </a-form-model-item>
+              <a-form-model-item label="企业电话" prop="entPhone">
+                <a-input placeholder="请输入企业电话" v-model="form.entPhone" />
+              </a-form-model-item>
+              <a-form-model-item label="企业LOGO">
+                <a-upload
+                  name="file"
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :show-upload-list="false"
+                  :action="uploadUrl"
+                  :before-upload="beforeUpload"
+                  @change="(e) => handleChange(e, 'logo')"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <img v-if="form.logoUrl" :src="form.logoUrl" alt="avatar" style="width: 128px; height: 128px" />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+              <a-form-model-item label="企业营业执照">
+                <a-upload
+                  name="file"
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :show-upload-list="false"
+                  :before-upload="before"
+                  :action="uploadUrl"
+                  @change="(e) => handleChange(e, 'license')"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <img v-if="form.bizLicUrl" :src="form.bizLicUrl" alt="avatar" style="width: 128px; height: 128px" />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="企业简称" prop="abbrName">
+                <a-input placeholder="请输入企业简称" v-model="form.abbrName" />
+              </a-form-model-item>
+              <a-form-model-item label="企业编码" prop="entCode">
+                <a-input placeholder="请输入企业编码" v-model="form.entCode" />
+              </a-form-model-item>
+              <a-form-model-item label="所属行业" prop="industryList">
+                <a-cascader
+                  v-model="form.industryList"
+                  :field-names="{ label: 'name', value: 'id', children: 'children' }"
+                  :options="industryOptions"
+                  placeholder="请选择所属行业"
+                  @change="industryChange"
                 />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                </div>
-              </a-upload>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-      </div>
-    </a-form-model>
-    <div v-show="current == 2" style="margin-top: 30px">
+              </a-form-model-item>
+              <a-form-model-item label="企业等级" prop="abbrName">
+                <a-radio-group v-model="form.entGrade" @change="entGradeChange">
+                  <a-radio :value="item.value" v-for="(item, index) in entGradeList" :key="index">
+                    {{ item.name }}
+                  </a-radio>
+                </a-radio-group>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </div>
+      </a-form-model>
       <a-form-model
-        ref="ruleFormLegal"
-        :model="formLegal"
+        ref="ruleformPerson"
+        :model="formPerson"
         :rules="rules"
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <a-row class="form-row" :gutter="16">
-          <a-col :span="12">
-            <a-form-model-item label="企业法人姓名" prop="name">
-              <a-input v-model="formLegal.name" placeholder="请输入企业法人姓名" />
-            </a-form-model-item>
-            <a-form-model-item label="身份证正面">
-              <a-upload
-                name="file"
-                list-type="picture-card"
-                class="avatar-uploader"
-                accept=".jpg,.png"
-                :show-upload-list="false"
-                :before-upload="beforeUpload"
-                :action="uploadUrl"
-                @change="(e) => handleChange(e, 'idCardFront')"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <img
-                  v-if="formLegal.idCardFrontUrl"
-                  :src="formLegal.idCardFrontUrl"
-                  alt="avatar"
-                  style="width: 128px; height: 128px"
-                />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <!-- <div class="ant-upload-text">Upload</div> -->
-                </div>
-              </a-upload>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="法人身份证号" prop="idCard">
-              <a-input v-model="formLegal.idCard" placeholder="请输入法人身份证号" />
-            </a-form-model-item>
+        <div style="margin-top: 30px" v-show="current == 1">
+          <a-row class="form-row" :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item label="联系人姓名" prop="name">
+                <a-input placeholder="请输入联系人姓名" v-model="formPerson.name" />
+              </a-form-model-item>
 
-            <a-form-model-item label="身份证反面">
-              <a-upload
-                name="file"
-                list-type="picture-card"
-                class="avatar-uploader"
-                accept=".jpg,.png"
-                :show-upload-list="false"
-                :before-upload="beforeUpload"
-                :action="uploadUrl"
-                @change="(e) => handleChange(e, 'idCardBack')"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <img
-                  v-if="formLegal.idCardBackUrl"
-                  :src="formLegal.idCardBackUrl"
-                  alt="avatar"
-                  style="width: 128px; height: 128px"
-                />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                </div>
-              </a-upload>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
+              <a-form-model-item label="联系人手机号" prop="phone">
+                <a-input v-model="formPerson.phone" placeholder="请输入联系人手机号" />
+              </a-form-model-item>
+
+              <a-form-model-item label="身份证正面">
+                <a-upload
+                  name="file"
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :show-upload-list="false"
+                  :before-upload="before"
+                  :action="uploadUrl"
+                  @change="(e) => handleChange(e, 'contactIdFront')"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <img
+                    v-if="formPerson.idCardFrontUrl"
+                    :src="formPerson.idCardFrontUrl"
+                    alt="avatar"
+                    style="width: 128px; height: 128px"
+                  />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="联系人身份证号" prop="idCard">
+                <a-input v-model="formPerson.idCard" placeholder="请输入联系人身份证号" />
+              </a-form-model-item>
+              <a-form-model-item label="联系人邮箱" prop="email">
+                <a-input v-model="formPerson.email" placeholder="请输入联系人邮箱" />
+              </a-form-model-item>
+
+              <a-form-model-item label="身份证反面">
+                <a-upload
+                  name="file"
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :show-upload-list="false"
+                  :before-upload="before"
+                  :action="uploadUrl"
+                  @change="(e) => handleChange(e, 'contactIdBack')"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <img
+                    v-if="formPerson.idCardBackUrl"
+                    :src="formPerson.idCardBackUrl"
+                    alt="avatar"
+                    style="width: 128px; height: 128px"
+                  />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </div>
       </a-form-model>
-    </div>
-    <a-form-model
-      ref="ruleformContract"
-      :model="formContract"
-      :rules="rules"
-      :label-col="labelCol"
-      :wrapper-col="wrapperCol"
-    >
-      <div style="margin-top: 30px" v-show="current == 3">
-        <a-row class="form-row" :gutter="16">
-          <a-col :span="12">
-            <a-form-model-item label="合同编号" prop="contractCode">
-              <a-input v-model="formContract.contractCode" placeholder="请输入合同编号" />
-            </a-form-model-item>
-            <a-form-model-item label="合同名称" prop="contractName">
-              <a-input v-model="formContract.contractName" placeholder="请输入合同名称" />
-            </a-form-model-item>
+      <div v-show="current == 2" style="margin-top: 30px">
+        <a-form-model
+          ref="ruleFormLegal"
+          :model="formLegal"
+          :rules="rules"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+        >
+          <a-row class="form-row" :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item label="企业法人姓名" prop="name">
+                <a-input v-model="formLegal.name" placeholder="请输入企业法人姓名" />
+              </a-form-model-item>
+              <a-form-model-item label="身份证正面">
+                <a-upload
+                  name="file"
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :show-upload-list="false"
+                  :before-upload="beforeUpload"
+                  :action="uploadUrl"
+                  @change="(e) => handleChange(e, 'idCardFront')"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <img
+                    v-if="formLegal.idCardFrontUrl"
+                    :src="formLegal.idCardFrontUrl"
+                    alt="avatar"
+                    style="width: 128px; height: 128px"
+                  />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                    <!-- <div class="ant-upload-text">Upload</div> -->
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="法人身份证号" prop="idCard">
+                <a-input v-model="formLegal.idCard" placeholder="请输入法人身份证号" />
+              </a-form-model-item>
 
-            <a-form-model-item label="合同是否续签" prop="isRenew">
-              <a-radio-group v-model="formContract.isRenew">
-                <a-radio :value="0"> 是 </a-radio>
-                <a-radio :value="-1"> 否 </a-radio>
-              </a-radio-group>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="合同生效日期" prop="fromTime">
-              <a-date-picker valueFormat="YYYY-MM-DD" v-model="formContract.fromTime" />
-            </a-form-model-item>
-            <a-form-model-item label="合同失效日期" prop="thruTime">
-              <a-date-picker v-model="formContract.thruTime" valueFormat="YYYY-MM-DD" />
-            </a-form-model-item>
-
-            <a-form-model-item label="合同附件">
-              <a-upload
-                name="file"
-                :action="uploadUrl"
-                :before-upload="before"
-                :file-list="fileList"
-                @change="contractChange"
-                :headers="{
-                  'X-Access-Token': token,
-                }"
-                :data="biz"
-              >
-                <a-button> <a-icon type="upload" />选择文件</a-button>
-              </a-upload>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
+              <a-form-model-item label="身份证反面">
+                <a-upload
+                  name="file"
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  accept=".jpg,.png"
+                  :show-upload-list="false"
+                  :before-upload="beforeUpload"
+                  :action="uploadUrl"
+                  @change="(e) => handleChange(e, 'idCardBack')"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <img
+                    v-if="formLegal.idCardBackUrl"
+                    :src="formLegal.idCardBackUrl"
+                    alt="avatar"
+                    style="width: 128px; height: 128px"
+                  />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </a-form-model>
       </div>
-    </a-form-model>
-    <div class="steps-action">
-      <a-button v-if="current > 0" style="margin-right: 8px" @click="prev"> 上一步 </a-button>
-      <a-button v-if="current == 0" type="primary" @click="onSubmit"> 下一步 </a-button>
-      <a-button v-if="current == 1" type="primary" @click="onSecond"> 下一步 </a-button>
-      <a-button v-if="current == 2" type="primary" @click="onFormPerson"> 下一步 </a-button>
-      <a-button v-if="current == 3" type="primary" @click="onFormContract"> 提交 </a-button>
-    </div>
-    <div></div>
+      <a-form-model
+        ref="ruleformContract"
+        :model="formContract"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <div style="margin-top: 30px" v-show="current == 3">
+          <a-row class="form-row" :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item label="合同编号" prop="contractCode">
+                <a-input v-model="formContract.contractCode" placeholder="请输入合同编号" />
+              </a-form-model-item>
+              <a-form-model-item label="合同名称" prop="contractName">
+                <a-input v-model="formContract.contractName" placeholder="请输入合同名称" />
+              </a-form-model-item>
+
+              <a-form-model-item label="合同是否续签" prop="isRenew">
+                <a-radio-group v-model="formContract.isRenew">
+                  <a-radio :value="0"> 是 </a-radio>
+                  <a-radio :value="-1"> 否 </a-radio>
+                </a-radio-group>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="合同生效日期" prop="fromTime">
+                <a-date-picker valueFormat="YYYY-MM-DD" v-model="formContract.fromTime" />
+              </a-form-model-item>
+              <a-form-model-item label="合同失效日期" prop="thruTime">
+                <a-date-picker v-model="formContract.thruTime" valueFormat="YYYY-MM-DD" />
+              </a-form-model-item>
+
+              <a-form-model-item label="合同附件">
+                <a-upload
+                  name="file"
+                  :action="uploadUrl"
+                  :before-upload="before"
+                  :file-list="fileList"
+                  @change="contractChange"
+                  :headers="{
+                    'X-Access-Token': token,
+                  }"
+                  :data="biz"
+                >
+                  <a-button> <a-icon type="upload" />选择文件</a-button>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </div>
+      </a-form-model>
+      <div class="steps-action">
+        <a-button v-if="current > 0" style="margin-right: 8px" @click="prev"> 上一步 </a-button>
+        <a-button v-if="current == 0" type="primary" @click="onSubmit"> 下一步 </a-button>
+        <a-button v-if="current == 1" type="primary" @click="onSecond"> 下一步 </a-button>
+        <a-button v-if="current == 2" type="primary" @click="onFormPerson"> 下一步 </a-button>
+        <a-button v-if="current == 3" type="primary" @click="onFormContract"> 提交 </a-button>
+      </div>
+      <div></div>
+    </a-card>
   </div>
 </template>
 
