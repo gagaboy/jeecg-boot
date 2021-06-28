@@ -4,13 +4,13 @@
 
     <resultMap id="ChannelInfoMap" type="com.chinaunicom.business.channel.vo.ChannelInfoVO">
         <id property="channelId" column="channel_id"/>
-        <result property="channelName" column="ent_name"/>
-        <result property="channelType" column="abbr_name"/>
-        <result property="channelTypeName" column="ent_code"/>
-        <result property="status" column="logo_url"/>
-        <result property="entId" column="ent_grade"/>
-        <result property="entLogoUrl" column="status"/>
-        <result property="entName" column="status"/>
+        <result property="channelName" column="channel_name"/>
+        <result property="channelType" column="channel_type"/>
+        <result property="channelTypeName" column="channel_type_name"/>
+        <result property="status" column="status"/>
+        <result property="entId" column="entId"/>
+        <result property="entLogoUrl" column="ent_logo_url"/>
+        <result property="entName" column="ent_name"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>

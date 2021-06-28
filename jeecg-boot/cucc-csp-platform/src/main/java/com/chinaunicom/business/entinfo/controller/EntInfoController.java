@@ -7,11 +7,15 @@ import com.chinaunicom.business.entinfo.entity.EntInfo;
 import com.chinaunicom.business.entinfo.service.IEntInfoService;
 import com.chinaunicom.business.entinfo.vo.EntInfoDetailVO;
 import com.chinaunicom.constants.StatusConstant;
+import com.chinaunicom.validation.PermissionCheck;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.vo.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +53,10 @@ public class EntInfoController {
     @PostMapping("/save")
     public Result save(@Valid @RequestBody EntInfoDetailVO entInfoDetail) {
         try {
+            //校验权限，只有管理员才具备创建权限
+            if (!PermissionCheck.isAdmin()) {
+                return Result.error("权限不足");
+            }
             entInfoService.saveEntInfo(entInfoDetail);
             return Result.OK();
         } catch (Exception e) {
@@ -85,11 +93,16 @@ public class EntInfoController {
         }
     }
 
-    @ApiOperation(value = "查询所有企业", notes = "查询所有企业")
+    @ApiOperation(value = "查询所有企业(权限范围内)", notes = "查询所有企业(权限范围内)")
     @GetMapping("/listAll")
     public Result listAll() {
         try {
-            return Result.OK(entInfoService.list(new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getStatus, StatusConstant.STATUS_ENABLED)));
+            LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+            LambdaQueryWrapper<EntInfo> queryWrapper = new LambdaQueryWrapper<>(EntInfo.class).eq(EntInfo::getStatus, StatusConstant.STATUS_ENABLED);
+            if (!StringUtils.isEmpty(sysUser.getEntId())) {
+                queryWrapper.eq(EntInfo::getEntId, sysUser.getEntId());
+            }
+            return Result.OK(entInfoService.list(queryWrapper));
         } catch (Exception e) {
             log.error("/entInfo/listAll 接口异常：{}", e);
             return Result.error("查询所有企业失败");

@@ -93,6 +93,9 @@ public class ChatbotAccountVO {
     @ApiModelProperty(value = "通道名称")
     private String channelName;
 
+    @ApiModelProperty(value = "所属运营商ID")
+    private String operatorId;
+
     @ApiModelProperty(value = "所属运营商")
     private String operator;
 

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chinaunicom.business.chatbot.entity.ChatbotAccount;
+import com.chinaunicom.business.chatbot.vo.ChatbotAccountCopyVO;
+import com.chinaunicom.business.chatbot.vo.ChatbotAccountSimpleVO;
 import com.chinaunicom.business.chatbot.vo.ChatbotAccountVO;
 
 import java.util.List;
@@ -54,5 +56,12 @@ public interface IChatbotAccountService extends IService<ChatbotAccount> {
      *
      * @return
      */
-    List<ChatbotAccount> listUnlinkChannel();
+    List<ChatbotAccountSimpleVO> listUnlinkChannel();
+
+    /**
+     * chatbot账号复制
+     *
+     * @param chatbotAccountCopyVO
+     */
+    void copyChatbotAccount(ChatbotAccountCopyVO chatbotAccountCopyVO);
 }

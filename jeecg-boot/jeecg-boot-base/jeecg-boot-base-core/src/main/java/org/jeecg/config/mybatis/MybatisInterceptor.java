@@ -107,7 +107,7 @@ public class MybatisInterceptor implements Interceptor {
 							}
 						}
 					}
-					//注入企业编码
+/*					//注入企业编码
 					if (MybatisPlusConfig.tenant_field.equalsIgnoreCase(field.getName())) {
 						field.setAccessible(true);
 						Object local_EntId = field.get(parameter);
@@ -120,7 +120,7 @@ public class MybatisInterceptor implements Interceptor {
 								field.setAccessible(false);
 							}
 						}
-					}
+					}*/
 				} catch (Exception e) {
 				}
 			}

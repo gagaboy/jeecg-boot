@@ -46,6 +46,9 @@ public class ChannelInfoServiceImpl extends ServiceImpl<ChannelInfoMapper, Chann
         List<ChatbotAccountSimpleVO> accountList = channelInfoVO.getChatbotAccountList();
         accountList = accountList.stream().filter(account -> !StringUtils.isEmpty(account.getChatbotId())).collect(Collectors.toList());
         Assert.notEmpty(accountList, "未关联账号");
+        //重名校验
+        int count = channelInfoMapper.selectCount(new LambdaQueryWrapper<>(ChannelInfo.class).eq(ChannelInfo::getChannelName, channelInfoVO.getChannelName()));
+        Assert.isTrue(count <= 0, "通道名称已存在");
         //保存ChannelInfo
         ChannelInfo channelInfo = new ChannelInfo();
         BeanUtils.copyProperties(channelInfoVO, channelInfo);
@@ -70,6 +73,9 @@ public class ChannelInfoServiceImpl extends ServiceImpl<ChannelInfoMapper, Chann
     public void updateChannelInfo(ChannelInfoVO channelInfoVO) {
         ChannelInfo channelInfo = channelInfoMapper.selectOne(new LambdaQueryWrapper<>(ChannelInfo.class).eq(ChannelInfo::getChannelId, channelInfoVO.getChannelId()).ne(ChannelInfo::getStatus, StatusConstant.STATUS_DELETE));
         Assert.notNull(channelInfo, "通道不存在");
+        //重名校验
+        int count = channelInfoMapper.selectCount(new LambdaQueryWrapper<>(ChannelInfo.class).eq(ChannelInfo::getChannelName, channelInfoVO.getChannelName()).ne(ChannelInfo::getChannelId, channelInfoVO.getChannelId()));
+        Assert.isTrue(count <= 0, "通道名称已存在");
         //更新ChannelInfo
         BeanUtils.copyProperties(channelInfoVO, channelInfo);
         channelInfoMapper.updateById(channelInfo);

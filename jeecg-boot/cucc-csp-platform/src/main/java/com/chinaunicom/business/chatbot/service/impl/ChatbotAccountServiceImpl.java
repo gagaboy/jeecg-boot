@@ -6,8 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chinaunicom.business.chatbot.entity.ChatbotAccount;
 import com.chinaunicom.business.chatbot.mapper.ChatbotAccountMapper;
 import com.chinaunicom.business.chatbot.service.IChatbotAccountService;
+import com.chinaunicom.business.chatbot.vo.ChatbotAccountCopyVO;
+import com.chinaunicom.business.chatbot.vo.ChatbotAccountSimpleVO;
 import com.chinaunicom.business.chatbot.vo.ChatbotAccountVO;
-import com.chinaunicom.common.service.IRegionProvinceApplService;
+import com.chinaunicom.business.serviceregion.entity.ServiceRegion;
+import com.chinaunicom.business.serviceregion.service.IServiceRegionService;
 import com.chinaunicom.constants.StatusConstant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +33,15 @@ public class ChatbotAccountServiceImpl extends ServiceImpl<ChatbotAccountMapper,
     @Autowired
     private ChatbotAccountMapper chatbotAccountMapper;
 
+    @Autowired
+    private IServiceRegionService serviceRegionService;
+
     @Override
     public void saveChatbotAccount(ChatbotAccount chatbotAccount) {
+        //唯一性校验
+        boolean unique = checkUniqueChatbotWithOperator(null, chatbotAccount.getChatbotName(), chatbotAccount.getServiceRegionId());
+        Assert.isTrue(unique, "该运营商下已存在该账号名称");
+
         chatbotAccount.setStatus(StatusConstant.STATUS_ENABLED);
         int insertCount = chatbotAccountMapper.insert(chatbotAccount);
         Assert.isTrue(insertCount > 0, "保存chatbot账号信息失败");
@@ -39,6 +49,10 @@ public class ChatbotAccountServiceImpl extends ServiceImpl<ChatbotAccountMapper,
 
     @Override
     public void updateChatbotAccount(ChatbotAccount chatbotAccount) {
+        //唯一性校验
+        boolean unique = checkUniqueChatbotWithOperator(chatbotAccount.getChatbotId(), chatbotAccount.getChatbotName(), chatbotAccount.getServiceRegionId());
+        Assert.isTrue(unique, "该运营商下已存在该账号名称");
+
         ChatbotAccount oldChatbotAccount = chatbotAccountMapper.selectById(chatbotAccount.getChatbotId());
         Assert.notNull(oldChatbotAccount, "数据不存在");
         BeanUtils.copyProperties(chatbotAccount, oldChatbotAccount);
@@ -61,7 +75,43 @@ public class ChatbotAccountServiceImpl extends ServiceImpl<ChatbotAccountMapper,
     }
 
     @Override
-    public List<ChatbotAccount> listUnlinkChannel() {
+    public List<ChatbotAccountSimpleVO> listUnlinkChannel() {
         return chatbotAccountMapper.listUnlinkChannel();
+    }
+
+    @Override
+    public void copyChatbotAccount(ChatbotAccountCopyVO chatbotAccountCopyVO) {
+        ChatbotAccount chatbotAccount = chatbotAccountMapper.selectById(chatbotAccountCopyVO.getChatbotId());
+        Assert.notNull(chatbotAccount, "要复制的账号不存在");
+
+        //唯一性校验
+        boolean unique = checkUniqueChatbotWithOperator(null, chatbotAccountCopyVO.getChatbotName(), chatbotAccountCopyVO.getServiceRegionId());
+        Assert.isTrue(unique, "该运营商下已存在该账号名称");
+
+        ChatbotAccount newChatbotAccount = new ChatbotAccount();
+        BeanUtils.copyProperties(chatbotAccount, newChatbotAccount);
+        BeanUtils.copyProperties(chatbotAccountCopyVO, newChatbotAccount);
+        newChatbotAccount.setChatbotId(null);
+        newChatbotAccount.setEntId(null);
+        newChatbotAccount.setCreateBy(null);
+        newChatbotAccount.setCreateTime(null);
+        newChatbotAccount.setUpdateBy(null);
+        newChatbotAccount.setUpdateTime(null);
+        newChatbotAccount.setStatus(StatusConstant.STATUS_ENABLED);
+        int insertCount = chatbotAccountMapper.insert(newChatbotAccount);
+        Assert.isTrue(insertCount > 0, "复制Chatbot账号失败");
+    }
+
+    /**
+     * Chatbot账号名称+运营商唯一性校验
+     *
+     * @param serviceRegionId
+     * @param chatbotId
+     * @param chatbotName
+     */
+    private boolean checkUniqueChatbotWithOperator(String chatbotId, String chatbotName, String serviceRegionId) {
+        ServiceRegion serviceRegion = serviceRegionService.getById(serviceRegionId);
+        int count = chatbotAccountMapper.countChatbotWithOperator(chatbotId, chatbotName, serviceRegion.getOperatorId());
+        return count > 0 ? false : true;
     }
 }

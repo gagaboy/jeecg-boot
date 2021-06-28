@@ -7,6 +7,7 @@ import com.chinaunicom.business.channel.entity.ChannelInfo;
 import com.chinaunicom.business.channel.service.IChannelInfoService;
 import com.chinaunicom.business.channel.vo.ChannelInfoVO;
 import com.chinaunicom.constants.StatusConstant;
+import com.chinaunicom.validation.PermissionCheck;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +62,15 @@ public class ChannelInfoController {
     @PostMapping("/save")
     public Result save(@RequestBody @Valid ChannelInfoVO channelInfoVO) {
         try {
+            //校验权限，管理员不具备创建权限
+            if (PermissionCheck.isAdmin()) {
+                return Result.error("权限不足");
+            }
             channelInfoService.saveChannelInfo(channelInfoVO);
             return Result.OK();
         } catch (Exception e) {
             log.error("/channel/save 接口异常：{}", e);
-            return Result.error("保存通道信息失败");
+            return Result.error(e.getMessage());
         }
     }
 
@@ -80,7 +85,7 @@ public class ChannelInfoController {
             return Result.OK();
         } catch (Exception e) {
             log.error("/channel/update 接口异常：{}", e);
-            return Result.error("更新通道信息失败");
+            return Result.error(e.getMessage());
         }
     }
 

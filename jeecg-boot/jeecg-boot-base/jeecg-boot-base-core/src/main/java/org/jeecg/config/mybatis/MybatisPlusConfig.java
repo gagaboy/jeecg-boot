@@ -47,7 +47,6 @@ public class MybatisPlusConfig {
     static {
         tenantTable.add("chatbot_account");
         tenantTable.add("channel_info");
-        tenantTable.add("ent_info");
         DDL_KEYWORD.add("alter");
     }
 

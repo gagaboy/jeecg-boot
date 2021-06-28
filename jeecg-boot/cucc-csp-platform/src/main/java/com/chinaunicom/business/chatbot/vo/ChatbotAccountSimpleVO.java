@@ -21,4 +21,7 @@ public class ChatbotAccountSimpleVO {
 
     @ApiModelProperty(value = "所属运营商")
     private String operator;
+
+    @ApiModelProperty(value = "运营商名称")
+    private String operatorName;
 }

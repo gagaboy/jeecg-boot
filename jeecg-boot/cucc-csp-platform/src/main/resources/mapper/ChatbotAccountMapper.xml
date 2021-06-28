@@ -3,7 +3,8 @@
 <mapper namespace="com.chinaunicom.business.chatbot.mapper.ChatbotAccountMapper">
 
     <select id="pageList" resultType="com.chinaunicom.business.chatbot.vo.ChatbotAccountVO">
-        SELECT ca.*, sr.chatbot_domain, sdi.item_value AS operator, caa.audit_status, ci.channel_id, ci.channel_name
+        SELECT ca.*, sr.chatbot_domain, sr.operator_id, sdi.item_value AS operator, caa.audit_status, ci.channel_id,
+        ci.channel_name
         FROM chatbot_account ca
         INNER JOIN service_region sr ON ca.service_region_id = sr.id
         INNER JOIN sys_dict_item sdi ON sr.operator_id = sdi.id
@@ -28,9 +29,32 @@
     </select>
 
     <select id="listUnlinkChannel" resultType="com.chinaunicom.business.chatbot.vo.ChatbotAccountSimpleVO">
-        SELECT ca.chatbot_id,ca.chatbot_name
+        SELECT ca.chatbot_id, ca.chatbot_name, sdi.item_value AS operator, sdi.item_text AS operatorName
         FROM chatbot_account ca
+        INNER JOIN service_region sr ON ca.service_region_id = sr.id
+        INNER JOIN sys_dict_item sdi ON sr.operator_id = sdi.id
         LEFT JOIN channel_chatbot_appl cca ON ca.chatbot_id = cca.chatbot_id
         WHERE ca.status = 0 AND cca.channel_id IS NULL
+    </select>
+
+    <select id="queryChatbotAccount" resultType="com.chinaunicom.business.chatbot.vo.ChatbotAccountVO">
+        SELECT ca.*, sr.chatbot_domain, sr.operator_id, sdi.item_value AS operator, caa.audit_status, ci.channel_id, ci.channel_name
+        FROM chatbot_account ca
+        INNER JOIN service_region sr ON ca.service_region_id = sr.id
+        INNER JOIN sys_dict_item sdi ON sr.operator_id = sdi.id
+        LEFT JOIN chatbot_account_audit caa ON ca.chatbot_id = caa.chatbot_id
+        LEFT JOIN channel_chatbot_appl caap ON ca.chatbot_id = caap.chatbot_id
+        LEFT JOIN channel_info ci ON caap.channel_id = ci.channel_id
+        WHERE ca.chatbot_id = #{chatbotId}
+    </select>
+
+    <select id="countChatbotWithOperator" resultType="int">
+        SELECT COUNT(*)
+        FROM chatbot_account ca
+        INNER JOIN service_region sr ON ca.service_region_id = sr.id
+        WHERE ca.chatbot_name = #{chatbotName} AND sr.operator_id = {operatorId}
+        <if test="chatbotId != null and chatbotId != ''">
+            AND ca.chatbot_id != #{chatbotId}
+        </if>
     </select>
 </mapper>
