@@ -7,26 +7,53 @@
     :trigger="null"
   >
     <logo />
-    <s-menu :collapsed="collapsed" :menu="menus" :theme="theme" @select="onSelect" :mode="mode" :style="smenuStyle">
+    <s-menu
+      :collapsed="collapsed"
+      :menu="menus"
+      :theme="theme"
+      @select="onSelect"
+      @updateMenuTitle="onUpdateMenuTitle"
+      :mode="mode"
+      :style="smenuStyle">
     </s-menu>
   </a-layout-sider>
 </template>
 
 <script>
-import ALayoutSider from 'ant-design-vue/es/layout/Sider'
-import Logo from '../tools/Logo'
-import SMenu from './index'
-import { mixin, mixinDevice } from '@/utils/mixin.js'
+  import ALayoutSider from 'ant-design-vue/es/layout/Sider'
+  import Logo from '../tools/Logo'
+  import SMenu from './index'
+  import { mixin, mixinDevice } from '@/utils/mixin.js'
 
-export default {
-  name: 'SideMenu',
-  components: { ALayoutSider, Logo, SMenu },
-  mixins: [mixin, mixinDevice],
-  props: {
-    mode: {
-      type: String,
-      required: false,
-      default: 'inline',
+  export default {
+    name: "SideMenu",
+    components: { ALayoutSider, Logo, SMenu },
+    mixins: [mixin, mixinDevice],
+    props: {
+      mode: {
+        type: String,
+        required: false,
+        default: 'inline'
+      },
+      theme: {
+        type: String,
+        required: false,
+        default: 'dark'
+      },
+      collapsible: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      collapsed: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      menus: {
+        type: Array,
+        required: true
+      }
     },
     theme: {
       type: String,
@@ -38,23 +65,12 @@ export default {
       required: false,
       default: false,
     },
-    collapsed: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    menus: {
-      type: Array,
-      required: true,
-    },
-  },
-  computed: {
-    smenuStyle() {
-      let style = { padding: '0' }
-      if (this.fixSiderbar) {
-        style['height'] = 'calc(100% - 59px)'
-        style['overflow'] = 'auto'
-        style['overflow-x'] = 'hidden'
+    methods: {
+      onSelect (obj) {
+        this.$emit('menuSelect', obj)
+      },
+      onUpdateMenuTitle (obj) {
+        this.$emit('updateMenuTitle', obj)
       }
       return style
     },

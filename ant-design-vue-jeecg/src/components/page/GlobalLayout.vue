@@ -15,6 +15,7 @@
           v-if="device === 'mobile'"
           :menus="menus"
           @menuSelect="menuSelect"
+          @updateMenuTitle="handleUpdateMenuTitle"
           :theme="navTheme"
           :collapsed="false"
           :collapsible="true"
@@ -26,6 +27,7 @@
         mode="inline"
         :menus="menus"
         @menuSelect="myMenuSelect"
+        @updateMenuTitle="handleUpdateMenuTitle"
         :theme="navTheme"
         :collapsed="collapsed"
         :collapsible="true"
@@ -46,6 +48,7 @@
           mode="inline"
           :menus="menus"
           @menuSelect="menuSelect"
+          @updateMenuTitle="handleUpdateMenuTitle"
           :theme="navTheme"
           :collapsed="false"
           :collapsible="true"
@@ -66,6 +69,7 @@
         :collapsed="collapsed"
         :device="device"
         @toggle="toggle"
+        @updateMenuTitle="handleUpdateMenuTitle"
       />
 
       <!-- layout content -->
@@ -86,48 +90,36 @@
 </template>
 
 <script>
-import SideMenu from '@/components/menu/SideMenu'
-import GlobalHeader from '@/components/page/GlobalHeader'
-import GlobalFooter from '@/components/page/GlobalFooter'
-// update-start---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
-// import SettingDrawer from '@/components/setting/SettingDrawer'
-// 注释这个因为在个人设置模块已经加载了SettingDrawer页面
-// update-end ---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
+  import SideMenu from '@/components/menu/SideMenu'
+  import GlobalHeader from '@/components/page/GlobalHeader'
+  import GlobalFooter from '@/components/page/GlobalFooter'
+  import { triggerWindowResizeEvent } from '@/utils/util'
+  import { mapActions, mapState } from 'vuex'
+  import { mixin, mixinDevice } from '@/utils/mixin.js'
+  // update-start---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
+  // import SettingDrawer from '@/components/setting/SettingDrawer'
+  // 注释这个因为在个人设置模块已经加载了SettingDrawer页面
+  // update-end ---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
 
-import { triggerWindowResizeEvent } from '@/utils/util'
-import { mapState, mapActions } from 'vuex'
-import { mixin, mixinDevice } from '@/utils/mixin.js'
+  export default {
+    name: 'GlobalLayout',
+    components: {
+      SideMenu,
+      GlobalHeader,
+      GlobalFooter,
+      // update-start---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
+      // // SettingDrawer
+      // 注释这个因为在个人设置模块已经加载了SettingDrawer页面
+      // update-end ---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
 
-export default {
-  name: 'GlobalLayout',
-  components: {
-    SideMenu,
-    GlobalHeader,
-    GlobalFooter,
-    // update-start---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
-    // // SettingDrawer
-    // 注释这个因为在个人设置模块已经加载了SettingDrawer页面
-    // update-end ---- author:os_chengtgen -- date:20190830 --  for:issues/463 -编译主题颜色已生效，但还一直转圈，显示主题 正在编译 ------
-  },
-  mixins: [mixin, mixinDevice],
-  data() {
-    return {
-      collapsed: false,
-      activeMenu: {},
-      menus: [],
-    }
-  },
-  computed: {
-    ...mapState({
-      // 主路由
-      mainRouters: (state) => state.permission.addRouters,
-      // 后台菜单
-      permissionMenuList: (state) => state.user.permissionList,
-    }),
-  },
-  watch: {
-    sidebarOpened(val) {
-      this.collapsed = !val
+    },
+    mixins: [mixin, mixinDevice],
+    data() {
+      return {
+        collapsed: false,
+        activeMenu:{},
+        menus: []
+      }
     },
   },
   created() {
@@ -168,18 +160,46 @@ export default {
       this.$ls.set(storeKey, this.activeMenu.meta.title)
       // update-end-author:sunjianlei date:20191223 for: 修复刷新后菜单Tab名字显示异常
     },
-    findMenuBykey(menus, key) {
-      for (let i of menus) {
-        if (i.path == key) {
-          this.activeMenu = { ...i }
-        } else if (i.children && i.children.length > 0) {
-          this.findMenuBykey(i.children, key)
+    methods: {
+      ...mapActions(['setSidebar']),
+      toggle() {
+        this.collapsed = !this.collapsed
+        this.setSidebar(!this.collapsed)
+        triggerWindowResizeEvent()
+      },
+      menuSelect() {
+        if (!this.isDesktop()) {
+          this.collapsed = false
         }
-      }
-    },
-    //update-end-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
-  },
-}
+      },
+      //update-begin-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
+      myMenuSelect(value){
+        //此处触发动态路由被点击事件
+        this.findMenuBykey(this.menus,value.key)
+        this.$emit("dynamicRouterShow",value.key,this.activeMenu.meta.title)
+      },
+      findMenuBykey(menus,key){
+        for(let i of menus){
+          if(i.path==key){
+            this.activeMenu = {...i}
+          }else if(i.children && i.children.length>0){
+            this.findMenuBykey(i.children,key)
+          }
+        }
+      },
+      //update-end-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
+
+      // update-begin-author:sunjianlei date:20210409 for: 修复动态功能测试菜单、带参数菜单标题错误、展开错误的问题
+      handleUpdateMenuTitle(value) {
+        this.findMenuBykey(this.menus, value.path)
+        this.activeMenu.meta.title = value.meta.title
+        this.$emit('dynamicRouterShow', value.path, this.activeMenu.meta.title)
+      },
+      // update-end-author:sunjianlei date:20210409 for: 修复动态功能测试菜单、带参数菜单标题错误、展开错误的问题
+
+    }
+  }
+
 </script>
 
 <style lang="less">

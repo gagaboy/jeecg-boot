@@ -91,69 +91,39 @@
 
     </a-form-model>
 
-    <two-step-captcha v-if="requiredTwoStepCaptcha"  :visible="stepCaptchaVisible"  @success="stepCaptchaSuccess"  @cancel="stepCaptchaCancel"></two-step-captcha>
+    <two-step-captcha v-if="requiredTwoStepCaptcha" :visible="stepCaptchaVisible" @success="stepCaptchaSuccess" @cancel="stepCaptchaCancel"></two-step-captcha>
     <login-select-tenant ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
   </div>
 </template>
 
 <script>
-  import { postAction, getAction } from '@/api/manage'
   import Vue from 'vue'
   import { ACCESS_TOKEN ,ENCRYPTED_STRING} from "@/store/mutation-types"
-  import { mapActions } from "vuex"
   import ThirdLogin from './third/ThirdLogin'
   import LoginSelectTenant from "./LoginSelectTenant"
   import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
   import { encryption , getEncryptedString } from '@/utils/encryption/aesEncrypt'
   import { timeFix } from "@/utils/util"
 
+  import LoginAccount from './LoginAccount'
+  import LoginPhone from './LoginPhone'
+
   export default {
     components: {
       LoginSelectTenant,
       TwoStepCaptcha,
-      ThirdLogin
+      ThirdLogin,
+      LoginAccount,
+      LoginPhone
     },
     data () {
       return {
-        inputFous:'',
-        model: {
-          username:'',
-          password:'',
-          inputCode: ''
-        },
-        loginType: 0,
-        validatorRules:{
-          username: [
-            { required: true, message: '请输入用户名!' },
-            { validator: this.handleUsernameOrEmail }
-          ],
-          password: [{
-            required: true, message: '请输入密码!', validator: 'click'
-          }],
-          inputCode: [{
-            required: true, message: '请输入验证码!'
-          }],
-          mobile: [
-            { required: true, message: '请输入手机号码!' },
-            { validator: this.validateMobile }
-          ],
-          captcha: [{
-            required: true, message: '请输入验证码!'
-          }]
-        },
         customActiveKey: 'tab1',
-        requestCodeSuccess: false,
-        randCodeImage: '',
-        currdatetime: '',
+        rememberMe: true,
         loginBtn: false,
         requiredTwoStepCaptcha: false,
         stepCaptchaVisible: false,
-        //手机号登录用
-        state: {
-          time: 60,
-          smsSendBtn: false,
-        },
         encryptedString:{
           key:"",
           iv:"",
@@ -161,90 +131,37 @@
       }
     },
     created() {
-      this.currdatetime = new Date().getTime();
-      this.model.rememberMe = true
       Vue.ls.remove(ACCESS_TOKEN)
       this.getRouterData();
-      this.handleChangeCheckCode();
+      this.rememberMe = true
     },
     methods:{
-      ...mapActions(['Login', 'Logout', 'PhoneLogin']),
       handleTabClick(key){
         this.customActiveKey = key
       },
-      handleUsernameOrEmail (rule, value, callback) {
-        const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-        if (regex.test(value)) {
-          this.loginType = 0
-        } else {
-          this.loginType = 1
-        }
-        callback()
-      },
-      /**刷新验证码*/
-      handleChangeCheckCode(){
-        this.currdatetime = new Date().getTime();
-        this.model.inputCode = ''
-        getAction(`/sys/randomImage/${this.currdatetime}`).then(res=>{
-          if(res.success){
-            this.randCodeImage = res.result
-            this.requestCodeSuccess=true
-          }else{
-            this.$message.error(res.message)
-            this.requestCodeSuccess=false
-          }
-        }).catch(()=>{
-          this.requestCodeSuccess=false
-        })
+      handleRememberMeChange(e){
+        this.rememberMe = e.target.checked
       },
       /**跳转到登录页面的参数-账号获取*/
       getRouterData(){
         this.$nextTick(() => {
           let temp = this.$route.params.username || this.$route.query.username || ''
           if (temp) {
-            this.model['username'] = temp
+            this.$refs.alogin.acceptUsername(temp)
           }
         })
       },
-      handleRememberMeChange(e){
-        this.model.rememberMe = e.target.checked
-      },
+
       //登录
       handleSubmit () {
-        let that = this
-        let loginParams = {};
-        that.loginBtn = true;
-        // 使用账户密码登录
-        if (that.customActiveKey === 'tab1') {
-          this.loginByUsername();
+        this.loginBtn = true;
+        if (this.customActiveKey === 'tab1') {
+          // 使用账户密码登录
+          this.$refs.alogin.handleLogin(this.rememberMe)
         } else {
-          this.loginByPhone()
+          //手机号码登录
+          this.$refs.plogin.handleLogin(this.rememberMe)
         }
-      },
-      /**
-       * 验证字段
-       * @param arr
-       * @param callback
-       */
-      validateFields(arr, callback){
-        let promiseArray = []
-        for(let item of arr){
-          let p = new Promise((resolve, reject) => {
-            this.$refs['form'].validateField(item, (err)=>{
-              if(!err){
-                resolve();
-              }else{
-                reject(err);
-              }
-            })
-          });
-          promiseArray.push(p)
-        }
-        Promise.all(promiseArray).then(()=>{
-          callback()
-        }).catch(err=>{
-          callback(err)
-        })
       },
       //账号密码登录
       loginByUsername(){
@@ -268,26 +185,9 @@
           }
         })
       },
-      //手机号码登录
-      loginByPhone(){
-        this.validateFields([ 'mobile', 'captcha' ], (err) => {
-          if (!err) {
-            let loginParams = {
-              mobile: this.model.mobile,
-              captcha: this.model.captcha,
-              remember_me: this.model.rememberMe
-            }
-            console.log("登录参数", loginParams)
-            this.PhoneLogin(loginParams).then((res) => {
-              console.log(res.result);
-              this.$refs.loginSelect.show(res.result)
-            }).catch((err) => {
-              this.requestFailed(err);
-            })
-          }else{
-            this.loginBtn = false;
-          }
-        })
+      // 登录后台成功
+      requestSuccess(loginResult){
+        this.$refs.loginSelect.show(loginResult)
       },
       //登录后台失败
       requestFailed (err) {
@@ -317,59 +217,7 @@
           description: `${timeFix()}，欢迎回来`,
         });
       },
-      validateMobile(rule,value,callback){
-        if (!value || new RegExp(/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/).test(value)){
-          callback();
-        }else{
-          callback("您的手机号码格式不正确!");
-        }
-      },
-      //获取验证码
-      getCaptcha (e) {
-        e.preventDefault();
-        let that = this;
-        that.validateFields([ 'mobile' ], (err) => {
-           if (!err) {
-              that.state.smsSendBtn = true;
-              let interval = window.setInterval(() => {
-                if (that.state.time-- <= 0) {
-                  that.state.time = 60;
-                  that.state.smsSendBtn = false;
-                  window.clearInterval(interval);
-                }
-              }, 1000);
 
-              const hide = that.$message.loading('验证码发送中..', 0);
-              let smsParams = {};
-              smsParams.mobile=that.model.mobile;
-              smsParams.smsmode="0";
-              postAction("/sys/sms",smsParams)
-                .then(res => {
-                  if(!res.success){
-                    setTimeout(hide, 0);
-                    that.cmsFailed(res.message);
-                  }
-                  console.log(res);
-                  setTimeout(hide, 500);
-                })
-                .catch(err => {
-                  setTimeout(hide, 1);
-                  clearInterval(interval);
-                  that.state.time = 60;
-                  that.state.smsSendBtn = false;
-                  that.requestFailed(err);
-                });
-            }
-          }
-        );
-      },
-      cmsFailed(err){
-        this.$notification[ 'error' ]({
-          message: '登录失败',
-          description:err,
-          duration: 4,
-        });
-      },
       stepCaptchaSuccess () {
         this.loginSuccess()
       },
