@@ -14,46 +14,26 @@
       @select="onSelect"
       @updateMenuTitle="onUpdateMenuTitle"
       :mode="mode"
-      :style="smenuStyle">
+    >
     </s-menu>
   </a-layout-sider>
 </template>
 
 <script>
-  import ALayoutSider from 'ant-design-vue/es/layout/Sider'
-  import Logo from '../tools/Logo'
-  import SMenu from './index'
-  import { mixin, mixinDevice } from '@/utils/mixin.js'
+import ALayoutSider from 'ant-design-vue/es/layout/Sider'
+import Logo from '../tools/Logo'
+import SMenu from './index'
+import { mixin, mixinDevice } from '@/utils/mixin.js'
 
-  export default {
-    name: "SideMenu",
-    components: { ALayoutSider, Logo, SMenu },
-    mixins: [mixin, mixinDevice],
-    props: {
-      mode: {
-        type: String,
-        required: false,
-        default: 'inline'
-      },
-      theme: {
-        type: String,
-        required: false,
-        default: 'dark'
-      },
-      collapsible: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      collapsed: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      menus: {
-        type: Array,
-        required: true
-      }
+export default {
+  name: 'SideMenu',
+  components: { ALayoutSider, Logo, SMenu },
+  mixins: [mixin, mixinDevice],
+  props: {
+    mode: {
+      type: String,
+      required: false,
+      default: 'inline',
     },
     theme: {
       type: String,
@@ -65,22 +45,42 @@
       required: false,
       default: false,
     },
-    methods: {
-      onSelect (obj) {
-        this.$emit('menuSelect', obj)
-      },
-      onUpdateMenuTitle (obj) {
-        this.$emit('updateMenuTitle', obj)
-      }
-      return style
+    collapsed: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
+    menus: {
+      type: Array,
+      required: true,
+    },
+  },
+  theme: {
+    type: String,
+    required: false,
+    default: 'dark',
+  },
+  collapsible: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
   methods: {
     onSelect(obj) {
       this.$emit('menuSelect', obj)
     },
+    onUpdateMenuTitle(obj) {
+      this.$emit('updateMenuTitle', obj)
+    },
+    // return style
   },
 }
+//   methods: {
+//     onSelect(obj) {
+//       this.$emit('menuSelect', obj)
+//     },
+//   },
+// }
 </script>
 <style lang="less" scoped>
 /* update_begin author:sunjianlei date:20190509 for: 修改侧边导航栏滚动条的样式 */

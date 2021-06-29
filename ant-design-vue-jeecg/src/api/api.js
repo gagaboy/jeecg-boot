@@ -118,6 +118,12 @@ const addChannel = (params) => postAction("/channel/save", params);
 const updateChannel = (params) => postAction("/channel/update", params);
 const deleteChannel = (params) => deleteAction("/channel/deleteById", params);
 
+// 素材管理
+const materialList = (params) => getAction("/material/list", params);
+const materialLabel = (params) => getAction("/material/label/listAll", params);
+
+
+
 // 中转HTTP请求
 export const transitRESTful = {
     get: (url, parameter) => getAction(getTransitURL(url), parameter),
@@ -204,5 +210,7 @@ export {
     listUnlinkChannel,
     addChannel,
     updateChannel,
-    deleteChannel
+    deleteChannel,
+    materialList,
+    materialLabel
 }
