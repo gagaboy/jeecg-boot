@@ -1,8 +1,8 @@
 <template>
   <div>
-    <messageCard v-if="['singleCard','manyCards'].indexOf(messageData.replyType) > -1" :data="messageData" />
+    <messageCard v-if="['singleCard','manyCards'].indexOf(messageData.contentType) > -1" :data="messageData" />
     <chatDialog v-else>
-      <render :data="messageData.reply" :type="messageData.replyType"></render>
+      <render :data="messageData.contentText" :type="messageData.contentType"></render>
     </chatDialog>
   </div>
 </template>

@@ -1,9 +1,6 @@
 <template>
   <div class="bcat-chat-message-box">
-    <div class="message-tip" v-if="tipShow">
-      <a-icon type="question-circle" style="color: #faad14" /> {{ tipMessage }}
-      <a-icon type="close" class="delete" @click="tipShow = false" />
-    </div>
+    <div class="message-tip" v-if="tipShow"><a-icon type="question-circle" style="color:#faad14" /> {{tipMessage}} <a-icon type="close" class="delete" @click="tipShow=false" /></div>
     <div class="bcat-chat-message-content" ref="chatWindow">
       <div class="content-empty" v-if="chatMessage.length == 0">
         <div></div>
@@ -16,63 +13,37 @@
       <div class="bact-chat-footer-info">
         <!-- <div class="copyright">Copyright ©2021</div> -->
         <ul class="bact-chat-button-list drop-handle" @mousedown="Drop" @mouseup="noDrop">
-          <li v-for="(btn, index) in floatBtnList" :key="index" @click="btnSendMessage(btn)">{{ btn.description }}</li>
+          <li v-for="(btn,index) in floatBtnList" :key="index" @click="btnSendMessage(btn)">{{btn.displayText}}</li>
         </ul>
       </div>
 
       <div class="user-input-wrapper" v-if="!isPreview">
         <div class="user-input-button">
-          <i
-            class="iconfont menu"
-            v-if="accountMenuList.length > 0"
-            :class="isMenu ? 'iconinput' : 'iconicon_menu'"
-            @click="isMenu = !isMenu"
-          ></i>
+          <i class="iconfont menu" v-if="accountMenuList.length > 0" :class="isMenu ? 'iconinput' : 'iconicon_menu' " @click="isMenu = !isMenu"></i>
         </div>
 
         <div class="chat-menu-list" v-if="isMenu">
           <template v-for="menu in accountMenuList">
-            <a-popover
-              overlay-class-name="chat-menu-popover"
-              trigger="click"
-              :key="menu.order"
-              v-if="menu.submenu.length > 0"
-            >
+            <a-popover overlay-class-name="chat-menu-popover" trigger="click" :key="menu.order" v-if="menu.submenu.length > 0">
               <template slot="content">
                 <ul class="chat-submenu-list">
-                  <li v-for="child in menu.submenu" :key="child.order" @click="accountMenuClick(child)">
-                    {{ child.itemName }}
-                  </li>
+                  <li v-for="child in menu.submenu" :key="child.order" @click="accountMenuClick(child)">{{child.itemName}}</li>
                 </ul>
               </template>
-              <div class="chat-menu-title" @click="accountMenuClick(menu)">
-                <i class="iconfont icondrag"></i>{{ menu.itemName }}
-              </div>
+              <div class="chat-menu-title" @click="accountMenuClick(menu)"><i class="iconfont icondrag "></i>{{menu.itemName}}</div>
             </a-popover>
-            <div v-else class="chat-menu-title" :key="menu.order" @click="accountMenuClick(menu)">
-              {{ menu.itemName }}
-            </div>
+            <div v-else class="chat-menu-title" :key="menu.order"  @click="accountMenuClick(menu)">{{menu.itemName}}</div>
           </template>
         </div>
 
         <div class="user-input-text" v-else>
           <input class="text" v-model.trim="userSendMessage" @keyup.enter="sendMessage('text')" />
           <div class="send" @click="sendMessage('text')">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              version="1.1"
-            >
-              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <rect x="0" y="0" width="24" height="24" />
-                <path
-                  d="M3,13.5 L19,12 L3,10.5 L3,3.7732928 C3,3.70255344 3.01501031,3.63261921 3.04403925,3.56811047 C3.15735832,3.3162903 3.45336217,3.20401298 3.70518234,3.31733205 L21.9867539,11.5440392 C22.098181,11.5941815 22.1873901,11.6833905 22.2375323,11.7948177 C22.3508514,12.0466378 22.2385741,12.3426417 21.9867539,12.4559608 L3.70518234,20.6826679 C3.64067359,20.7116969 3.57073936,20.7267072 3.5,20.7267072 C3.22385763,20.7267072 3,20.5028496 3,20.2267072 L3,13.5 Z"
-                  fill="#ffffff"
-                />
-              </g>
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <rect x="0" y="0" width="24" height="24"/>
+                    <path d="M3,13.5 L19,12 L3,10.5 L3,3.7732928 C3,3.70255344 3.01501031,3.63261921 3.04403925,3.56811047 C3.15735832,3.3162903 3.45336217,3.20401298 3.70518234,3.31733205 L21.9867539,11.5440392 C22.098181,11.5941815 22.1873901,11.6833905 22.2375323,11.7948177 C22.3508514,12.0466378 22.2385741,12.3426417 21.9867539,12.4559608 L3.70518234,20.6826679 C3.64067359,20.7116969 3.57073936,20.7267072 3.5,20.7267072 C3.22385763,20.7267072 3,20.5028496 3,20.2267072 L3,13.5 Z" fill="#ffffff"/>
+                </g>
             </svg>
           </div>
         </div>
@@ -87,10 +58,10 @@ import axios from 'axios'
 import { dropMixin } from './mixin'
 import chatMessage from './component/message'
 export default {
-  name: 'robot-chat-message-box',
+  name: "robot-chat-message-box",
   mixins: [dropMixin],
   components: {
-    chatMessage,
+    chatMessage
   },
   props: {
     chatApi: String,
@@ -99,188 +70,177 @@ export default {
     previewData: Object,
     isPreview: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       chatbotSessionId: undefined,
-      userSendMessage: '',
-      chatMessage: [], // message,
+      userSendMessage: "",
+      chatMessage: [],// message,
       floatBtnList: [],
       tipShow: false,
-      tipMessage: '',
+      tipMessage:"",
       isMenu: false,
-      btnMessageStyle: '',
-      accountMenuList: [],
+      btnMessageStyle:"",
+      accountMenuList:[],
     }
   },
-  inject: ['isShare'],
+  inject:['isShare'],
   provide() {
     let _self = this
     return {
       sendCardMessage(data) {
-        _self.btnSendMessage(data, data.type)
-      },
+        _self.btnSendMessage(data,data.type)
+      }
     }
   },
   watch: {
     previewData: {
-      handler: function (newVal) {
-        if (this.isPreview) {
-          if (JSON.stringify(newVal) != '{}') {
+      handler:function(newVal) {
+        if(this.isPreview) {
+          if(JSON.stringify(newVal) != '{}') {
             let receivedData = newVal.retContent
             this.floatBtnList = newVal.buttons
             this.chatMessage = []
-            this.dialogMessage(
-              {
-                id: Math.random(),
-                content: receivedData,
-              },
-              'received'
-            )
+            this.dialogMessage({
+              "id": Math.random(),
+              "content": receivedData,
+            },"received")
           } else {
             this.chatMessage = []
             this.floatBtnList = []
           }
-        }
+        } 
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     accountMenuClick(data) {
-      switch (data.itemType) {
+      switch(data.itemType) {
         case 'REPLY':
           this.userSendMessage = data.itemName
           this.sendMessage('text')
-          break
+          break;
         case 'OPEN_URL':
-          if (data.openType == 'browser') {
+          if(data.openType == 'browser') {
             this.openUrl({
-              content: data.href,
+              content: data.href
             })
           }
-          break
+          break;
       }
     },
     async reloadChatMessage() {
       this.clearMessage()
-      if (!this.chatAccount) return
+      if(!this.chatAccount) return
       this.chatbotSessionId = uuidv4()
       let accountUrl = window._CONFIG['chatbotWelcome'] + `${this.chatBot}/${this.chatAccount}`
-      const { data } = await axios.get(accountUrl, { withCredentials: false })
+      const { data } = await axios.get(accountUrl,{withCredentials: false})
       let welcomeData = JSON.parse(data.retContent)
       this.accountMenuList = welcomeData.menu ? JSON.parse(welcomeData.menu) : []
       this.isMenu = this.accountMenuList.length > 0
-      if (welcomeData.message == null) return
-      welcomeData.message.map((item) => {
+      if(welcomeData.message == null) return
+      welcomeData.message.map(item => {
         this.floatBtnList = JSON.parse(item).buttons
-        this.dialogMessage(
-          {
-            id: Math.random(),
-            content: item,
-          },
-          'received',
-          false
-        )
+        this.dialogMessage({
+          "id": Math.random(),
+          "content": item,
+        },"received",false)
       })
     },
     clearMessage() {
       this.chatMessage = []
       this.floatBtnList = []
     },
-    sendMessage(type, data) {
-      if (this.isPreview) return
-      if (this.userSendMessage == '') return
-      this.dialogMessage(
-        {
-          id: Math.random(),
-          content: `{"replyCollection":[{"replyType":"text","reply":{"content":"${this.userSendMessage}"}}]}`,
-        },
-        'sent'
-      )
+    sendMessage(type,data) {
+      if(this.isPreview) return
+      if(this.userSendMessage == '') return
+      this.dialogMessage({
+      "id": Math.random(),
+      "content":`{"replyCollection":[{"contentType":"text","contentText":{"content":"${this.userSendMessage}"}}]}`,
+      },"sent")
 
-      if (!data) {
+      if(!data) {
         data = {
-          message: this.userSendMessage,
+          "message":this.userSendMessage
         }
       }
       this.fetchChatMessage({
-        contentType: type,
-        content: data,
-        contributionId: this.chatbotSessionId,
+        "contentType": type,
+        "content":data,
+        "contributionId": this.chatbotSessionId
       })
     },
     openUrl(data) {
-      if (this.isShare) {
+      if(this.isShare) {
         location.href = data.content
       } else {
-        window.open(data.content, '_blank')
+        window.open(data.content,"_blank")
       }
     },
-    btnSendMessage(data, type = 'float') {
-      switch (data.type) {
+    btnSendMessage(data,type='float') {
+      switch(data.type) {
         case 'reply':
           this.userSendMessage = data.description
-          this.sendMessage('reply', {
-            postback: data.postback,
+          this.sendMessage('reply',{
+            postback:data.postback
           })
-          break
+          break;
         case 'url':
           this.openUrl(data)
-          break
+          break;
         default:
-          this.tipBtnMessage(data, type)
-          break
+          this.tipBtnMessage(data,type)
+          break;
       }
     },
-    tipBtnMessage(data, type) {},
-    dialogMessage(data, type, scroll = true) {
-      this.chatMessage.push({ ...data, type: type })
+    tipBtnMessage(data,type) {
+
+    },
+    dialogMessage(data,type,scroll=true) {
+      this.chatMessage.push({...data,"type":type})
       scroll && this.scrollBottom()
     },
 
     async fetchChatMessage(data) {
-      let { data: respData } = await axios.post(this.chatApi + this.chatBot, JSON.stringify(data), {
-        withCredentials: false,
-      })
-      if (respData.retContent != null) {
+      let {data:respData} = await axios.post(this.chatApi + this.chatBot, JSON.stringify(data),{withCredentials: false})
+      if(respData.retContent != null) {
         let receivedData = JSON.parse(respData.retContent)
-        receivedData.map((item) => {
+        receivedData.map(item => {
           this.floatBtnList = JSON.parse(item).buttons
-          this.dialogMessage(
-            {
-              id: Math.random(),
-              content: item,
-            },
-            'received'
-          )
+          this.dialogMessage({
+            "id": Math.random(),
+            "content": item,
+          },"received")
         })
       }
     },
     scrollBottom() {
-      this.$nextTick(function () {
-        this.userSendMessage = ''
-        setTimeout(() => {
-          if (this.isShare) {
-            window.scrollTo(0, document.documentElement.scrollHeight - window.innerHeight)
+      this.$nextTick(function() {
+        this.userSendMessage = ""
+        setTimeout(()=>{
+          if(this.isShare) {
+            window.scrollTo(0, document.documentElement.scrollHeight - window.innerHeight);
           } else {
             let boxEl = this.$refs.chatWindow
             boxEl.scrollTop = boxEl && boxEl.scrollHeight + 150
           }
-        }, 100)
+        },100)
       })
     },
-  },
+
+  }
 }
 </script>
 <style lang="less" >
+
 .bcat-chat-message-box {
-  position: relative;
+  position:relative;
   height: 560px;
   min-height: 560px;
-  background-color: #edf0f5;
+  background-color:#EDF0F5;
   .message-tip {
     width: 100%;
     box-sizing: border-box;
@@ -318,9 +278,10 @@ export default {
   }
 }
 
+
 .bcat-chat-message-box {
-  position: relative;
-  background-color: #edf0f5;
+  position:relative;
+  background-color:#EDF0F5;
 }
 
 .bcat-chat-message {
@@ -328,18 +289,16 @@ export default {
     overflow-y: auto;
     background-size: 100%;
     padding: 20px 10px 40px;
-    background-color: #edf0f5;
+    background-color:#EDF0F5;
     height: calc(100% - 54px);
-    ol,
-    ul,
-    dl {
+    ol, ul, dl {
       margin: 0;
     }
     video {
       outline: none;
     }
     .drop-handle {
-      cursor: grabbing;
+      cursor:grabbing;
       user-select: none;
     }
     .content-empty {
@@ -359,7 +318,7 @@ export default {
     bottom: 0;
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    background-color:#FFF;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     z-index: 99;
@@ -377,13 +336,13 @@ export default {
     .bact-chat-button-list {
       display: flex;
       flex-direction: row;
-      margin: 0 10px;
+      margin:0 10px;
       overflow: auto;
       &::-webkit-scrollbar {
         display: none;
       }
       li {
-        flex: none;
+        flex:none;
         border-radius: 5px;
         padding: 5px 8px;
         font-size: 12px;
@@ -400,35 +359,35 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      flex: 1;
+      flex:1;
       .user-input-text {
-        background-color: #fff;
-        flex: 1;
+        background-color: #FFF;
+        flex:1;
         display: flex;
-        flex-direction: row;
+        flex-direction: row; 
         align-items: center;
         padding: 3px;
         .text {
-          flex: 1;
+          flex:1;
           outline: none;
-          border: none;
-          padding: 0 10px;
-          background-color: #f4f4f8;
+          border:none;
+          padding:0 10px;
+          background-color: #F4F4F8;
           line-height: 36px;
           height: 36px;
           border-radius: 4px;
           &:focus {
-            border: none;
+            border:none;
             box-shadow: none;
           }
         }
         .send {
           width: 36px;
           height: 36px;
-          background: #6157cc;
+          background: #6157CC;
           border-radius: 4px;
           display: flex;
-          flex-direction: row;
+          flex-direction: row; 
           align-items: center;
           justify-content: center;
           margin-left: 8px;
@@ -437,8 +396,8 @@ export default {
       }
       .user-input-button {
         display: flex;
-        flex-direction: row;
-        align-items: center;
+        flex-direction: row; 
+        align-items: center; 
         margin: 0 2px;
         .icon {
           cursor: pointer;
@@ -446,7 +405,7 @@ export default {
           margin-right: 10px;
           color: rgb(170, 170, 170);
           &:hover {
-            color: rgba(97, 87, 204, 0.8);
+            color: rgba(97,87,204,0.8);
           }
         }
         .menu {
@@ -462,7 +421,7 @@ export default {
       flex-direction: row;
       justify-content: space-around;
       align-items: center;
-      flex: 1;
+      flex:1;
       line-height: 22px;
       .chat-menu-title {
         flex: 1 1 33.33%;
@@ -472,7 +431,7 @@ export default {
           margin-right: 3px;
         }
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           width: 1px;
           height: 16px;
@@ -488,17 +447,17 @@ export default {
 .chat-submenu-list {
   margin: 0 -16px;
   li {
-    padding: 0 16px;
-    line-height: 40px;
+    padding:0 16px;
+    line-height:40px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
   li:last-child {
-    border-bottom: none;
+    border-bottom:none
   }
 }
 .chat-menu-popover {
   .ant-popover-arrow {
-    display: none !important;
+    display: none!important;;
   }
 }
 </style>

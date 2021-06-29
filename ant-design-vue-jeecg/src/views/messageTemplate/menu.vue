@@ -12,20 +12,29 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item prop="description" label="显示文字" :label-col="{span:5}" :wrapper-col="{span:16}">
-          <a-input v-model="menuData.description" placeholder="请输入显示文字" />
+          <a-input v-model="menuData.displayText" placeholder="请输入显示文字" />
+        </a-form-model-item>
+
+      </a-row>
+
+      <!-- reply自定义 -->
+      <a-row v-if="menuData.type === 'reply'">
+        <a-form-model-item prop="postback" label="自定义postback" :label-col="{span:5}" :wrapper-col="{span:16}">
+          <a-input v-model="menuData.postback.data" placeholder="请输入postback" />
         </a-form-model-item>
       </a-row>
 
+
       <!-- 打开URL -->
-      <a-row v-if="menuData.type === 'url'">
-        <a-form-model-item prop="application" label="打开方式" default-value="webview" :label-col="{span:5}" :wrapper-col="{span:16}">
+      <a-row v-if="menuData.type === 'urlAction'">
+        <!-- <a-form-model-item prop="application" label="打开方式" default-value="webview" :label-col="{span:5}" :wrapper-col="{span:16}">
           <a-select v-model="menuData.application" placeholder="请选择打开方式">
             <a-select-option value="webview">webview打开</a-select-option>
             <a-select-option value="browser">浏览器打开</a-select-option>
           </a-select>
-        </a-form-model-item>
+        </a-form-model-item> -->
         <a-form-model-item label="链接地址" :label-col="{span:5}" :wrapper-col="{span:16}">
-          <a-input v-model="menuData.content" placeholder="请输入链接地址" />
+          <a-input v-model="menuData.urlAction.openUrl.url" placeholder="请输入链接地址" />
         </a-form-model-item>
       </a-row>
 
@@ -39,10 +48,10 @@
       </a-row>
 
       <!-- 拨打电话 -->
-      <a-row v-if="menuData.type == 'call'">
+      <a-row v-if="menuData.type == 'dialerAction'">
         <a-col>
           <a-form-model-item label="电话号码"  :label-col="{span:5}" :wrapper-col="{span:16}">
-            <a-input v-model="menuData.callPhone" placeholder="请输入电话号码" />
+            <a-input v-model="menuData.dialerAction.dialPhoneNumber.phoneNumber" placeholder="请输入电话号码" />
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -92,10 +101,19 @@ export default {
       type: Object,
       default() {
         return {
-          type:'reply'
+          type:'reply',
+          postback: {
+            data:""
+          }
         }
       }
     },
+  },
+  watch: {
+    "menuData.type": function(newVal) {
+      let newArr = this.menuDataList.filter(item => item.field.type == newVal)
+      this.$emit("update",newArr[0].field)
+    }
   },
   data() {
     return {
@@ -105,75 +123,90 @@ export default {
           icon: "mail",
           field: {
             type: "reply",
-            description: "回复信息",
+            displayText: "回复信息",
+            postback:{
+              data:''
+            }
           }
         },
         {
           text: '访问链接',
           icon: "link",
           field: {
-            type: "url",
-            description: "访问链接",
-            content:""
+            type: "urlAction",
+            displayText: "访问链接",
+            urlAction:{
+              openUrl: {
+                url: ""
+              }
+            }
           }
         },
-        {
-
-          text: '访问APP',
-          icon: "mobile",
-          field: {
-            type: "openApp",
-            description: "访问APP",
-            openAppAndroid: "",//app地址
-          }
-        },      
         {
           text: '拨打电话',
           icon: "phone",
           field: {
-            type: "call",
-            description: "拨打电话",
-            callPhone:""
+            type: "dialerAction",
+            displayText: "拨打电话",
+            dialerAction: {
+              dialPhoneNumber: {
+                phoneNumber: ""
+              }
+            }
+
+
           }
         }, 
-        {
-          text: '发送指定坐标',
-          icon: "bank",
-          field: {
-            type: "sendAddress",
-            description: "发送指定坐标",
-          }
-        },
-        {
-          text: '发送手机定位',
-          icon: "environment",
-          field: {
-            type: "addressLocation",
-            description: "发送手机定位",
-            sendAddressPlaceName: "", // 位置名称
-            sendAddressLongitude: "", // 位置纬度
-            sendAddressLatitude: "", // 位置经度
-          }
-        },
-        {
-          text: '拍摄',
-          icon: "camera",
-          field: {
-            type: "screen",
-            description: "拍摄",
-            targetContact:"", //联系人
-          }
-        },
-        {
-          text: '指定联系人发送',
-          icon: "team",
-          field: {
-            type: "bringUp",
-            description: "指定联系人发送",
-            targetContact:"", //联系人
-            presendContent:"",//预发送内容 
-          }
-        },
+
+        // {
+
+        //   text: '访问APP',
+        //   icon: "mobile",
+        //   field: {
+        //     type: "openApp",
+        //     displayText: "访问APP",
+        //     openAppAndroid: "",//app地址
+        //   }
+        // },      
+
+        // {
+        //   text: '发送指定坐标',
+        //   icon: "bank",
+        //   field: {
+        //     type: "sendAddress",
+        //     displayText: "发送指定坐标",
+        //   }
+        // },
+        // {
+        //   text: '发送手机定位',
+        //   icon: "environment",
+        //   field: {
+        //     type: "addressLocation",
+        //     displayText: "发送手机定位",
+        //     sendAddressPlaceName: "", // 位置名称
+        //     sendAddressLongitude: "", // 位置纬度
+        //     sendAddressLatitude: "", // 位置经度
+        //   }
+        // },
+        // {
+        //   text: '拍摄',
+        //   icon: "camera",
+        //   field: {
+        //     type: "screen",
+        //     displayText: "拍摄",
+        //     targetContact:"", //联系人
+        //   }
+        // },
+        // {
+        //   text: '指定联系人发送',
+        //   icon: "team",
+        //   field: {
+        //     type: "bringUp",
+        //     displayText: "指定联系人发送",
+        //     targetContact:"", //联系人
+        //     presendContent:"",//预发送内容 
+        //   }
+        // },
       ],
 
 
@@ -183,33 +216,35 @@ export default {
           label: '回复信息',
         },
         {
-          value: 'url',
+          value: 'urlAction',
           label: '访问链接',
         },
         {
-          value: 'openApp',
-          label: '访问app',
-        },
-        {
-          value: 'call',
+          value: 'dialerAction',
           label: '拨打电话',
         },
-        {
-          value: 'sendAddress',
-          label: '发送指定坐标',
-        },
-        {
-          value: 'addressLocation',
-          label: '发送手机定位',
-        },
-        {
-          value: 'screen',
-          label: '拍摄',
-        },
-        {
-          value: 'bringUp',
-          label: '指定联系人发送',
-        },
+
+        // {
+        //   value: 'openApp',
+        //   label: '访问app',
+        // },
+
+        // {
+        //   value: 'sendAddress',
+        //   label: '发送指定坐标',
+        // },
+        // {
+        //   value: 'addressLocation',
+        //   label: '发送手机定位',
+        // },
+        // {
+        //   value: 'screen',
+        //   label: '拍摄',
+        // },
+        // {
+        //   value: 'bringUp',
+        //   label: '指定联系人发送',
+        // },
       ],
     }
   },

@@ -11,7 +11,8 @@ export default {
     if(!this.type) return
     if(this.type == 'text') {
       return <div class="message-type-text">{this.data.content}</div>
-    } else if (this.type == 'file') {
+    } else if (this.type == 'file' && this.data.cspMediaUrl != '') {
+      
       let fileName = this.data.cspMediaUrl.split("/").pop()
       return (
         <div class="message-type-file">

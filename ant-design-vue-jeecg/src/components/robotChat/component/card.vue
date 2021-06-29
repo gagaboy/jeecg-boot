@@ -10,7 +10,7 @@
             <div class="showmore" @click="showMore(card.description)" v-if=" card.description.length > 200"><a-icon :type="isMore ? 'up' : 'down'" /></div>
           </div>
           <ul class="btn-list">
-            <li v-for="(btn,btnIndex) in card.buttons" :key="btnIndex" @click="send(btn)">{{btn.description}}</li>
+            <li v-for="(btn,btnIndex) in card.suggestions" :key="btnIndex" @click="send(btn)">{{btn.displayText}}</li>
           </ul>
         </div>
       </div>
@@ -35,8 +35,8 @@ export default {
   inject:['sendCardMessage'],
   data() {
     return {
-      reply: this.data.reply,
-      cardType: this.data.replyType,
+      reply: this.data.contentText,
+      cardType: this.data.contentType,
       cardOrientation:{
         HORIZONTAL:'card-flex-row',
         VERTICAL:'card-flex-column'
@@ -60,10 +60,10 @@ export default {
   },
   computed: {
     cardClassName() {
-      return this.cardOrientation[this.reply.cardOrientation] + ' ' + this.cardWidth[this.reply.cardWidth] + ' ' + this.cardHeight[this.reply.cardHeight] + ' ' + this.imageAlignment[this.reply.imageAlignment]
+      return this.cardOrientation[this.reply.layout.cardOrientation] + ' ' + this.cardWidth[this.reply.layout.cardWidth] + ' ' + this.cardHeight[this.reply.layout.cardHeight] + ' ' + this.imageAlignment[this.reply.layout.imageAlignment]
     },
     cardData() {
-      return this.data.replyType == 'singleCard' ? [this.data.reply.card] : this.data.reply.cards
+      return this.data.contentType == 'singleCard' ? [this.reply.content] : this.reply.content
     },
   },
   methods: {
