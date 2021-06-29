@@ -30,6 +30,16 @@ public class CommonConstant {
          * 缩略图文件上传路径
          */
         public static final String UPLOAD_PATH_THUMBNAIL = "/material/thumbnail";
+
+        /**
+         * 素材来源：本地
+         */
+        public static final String MATERIAL_SOURCE_LOCAL = "local";
+
+        /**
+         * 素材来源：编辑器
+         */
+        public static final String MATERIAL_SOURCE_EDITOR = "editor";
     }
 
     public static class OperatorConstant {

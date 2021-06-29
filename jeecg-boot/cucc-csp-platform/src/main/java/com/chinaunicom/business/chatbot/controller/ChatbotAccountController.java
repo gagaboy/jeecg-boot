@@ -57,7 +57,7 @@ public class ChatbotAccountController {
             return Result.OK();
         } catch (Exception e) {
             log.error("/chatbot/save 接口异常：{}", e);
-            return Result.error("保存chatbot信息失败");
+            return Result.error("保存chatbot信息失败：" + e.getMessage());
         }
     }
 

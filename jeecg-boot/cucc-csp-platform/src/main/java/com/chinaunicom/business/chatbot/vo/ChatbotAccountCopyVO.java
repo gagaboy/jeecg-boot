@@ -25,7 +25,7 @@ public class ChatbotAccountCopyVO {
     @ApiModelProperty(value = "Chatbot账号名称")
     private String chatbotName;
 
-    @NotBlank(message = "未选择服务daq")
+    @NotBlank(message = "未选择服务大区")
     @ApiModelProperty(value = "服务大区ID")
     private String serviceRegionId;
 

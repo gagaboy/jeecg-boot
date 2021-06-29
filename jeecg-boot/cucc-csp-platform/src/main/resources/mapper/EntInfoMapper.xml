@@ -89,6 +89,8 @@
     </select>
 
     <select id="queryCertificationList" resultType="com.chinaunicom.business.entinfo.entity.EntCertification">
-        select id, ent_id, operator, status from ent_certification WHERE ent_id = #{ent_id} AND thru_time is null
+        SELECT id, ent_id, operator, status
+        FROM ent_certification
+        WHERE ent_id = #{ent_id} AND thru_time is null
     </select>
 </mapper>

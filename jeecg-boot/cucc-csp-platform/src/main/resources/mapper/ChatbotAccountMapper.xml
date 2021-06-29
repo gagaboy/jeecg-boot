@@ -52,7 +52,7 @@
         SELECT COUNT(*)
         FROM chatbot_account ca
         INNER JOIN service_region sr ON ca.service_region_id = sr.id
-        WHERE ca.chatbot_name = #{chatbotName} AND sr.operator_id = {operatorId}
+        WHERE ca.chatbot_name = #{chatbotName} AND sr.operator_id = #{operatorId}
         <if test="chatbotId != null and chatbotId != ''">
             AND ca.chatbot_id != #{chatbotId}
         </if>

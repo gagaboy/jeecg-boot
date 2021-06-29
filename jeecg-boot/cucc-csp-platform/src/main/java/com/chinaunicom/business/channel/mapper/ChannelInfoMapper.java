@@ -19,6 +19,13 @@ import java.util.List;
  */
 public interface ChannelInfoMapper extends BaseMapper<ChannelInfo> {
 
+    /**
+     * 分页列表查询
+     *
+     * @param page
+     * @param channelInfoVO
+     * @return
+     */
     IPage<ChannelInfoVO> pageList(Page page, @Param("civ") ChannelInfoVO channelInfoVO);
 
     /**

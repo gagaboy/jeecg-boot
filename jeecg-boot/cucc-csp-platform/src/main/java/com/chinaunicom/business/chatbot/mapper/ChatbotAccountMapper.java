@@ -52,5 +52,5 @@ public interface ChatbotAccountMapper extends BaseMapper<ChatbotAccount> {
      * @param operatorId
      * @return
      */
-    int countChatbotWithOperator(@Param("chatbotId") String chatbotId, @Param("chatbotId") String chatbotName, @Param("operatorId") String operatorId);
+    int countChatbotWithOperator(@Param("chatbotId") String chatbotId, @Param("chatbotName") String chatbotName, @Param("operatorId") String operatorId);
 }
