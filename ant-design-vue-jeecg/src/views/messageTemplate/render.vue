@@ -49,16 +49,18 @@
     </a-form-model-item>
 
     <template v-if="type == 'location' ">
-      <a-form-model-item label="位置名称" prop="title">
-        <a-input  placeholder="位置名称" :max-length="24" v-model="geo.title" :auto-focus="true" />
-        <a href="https://lbs.amap.com/console/show/picker" target="_blank">查询经纬度</a>
+      <a-form-model-item label="位置信息" prop="title">
+        <locationMap @end="selectLocation" :location="geo" map-key="2b1f8d9a757a45754b0b1a85dd0d5553" />
       </a-form-model-item>
-      <a-form-model-item label="经度" prop="longitude" :rules="[{validator: geoValidate,pattern:/^[\-\+]?(0(\.\d{1,10})?|([1-9](\d)?)(\.\d{1,10})?|1[0-7]\d{1}(\.\d{1,10})?|180\.0{1,10})$/,message:'经度不正确',type:'longitude'}]">
-        <a-input  placeholder="例如:116.403963" v-model="geo.longitude" />
+      <!-- <a-form-model-item label="位置名称" prop="title">
+        <a-input  placeholder="位置名称" :max-length="24" readonly v-model="geo.title" :auto-focus="true" />
       </a-form-model-item>
-      <a-form-model-item label="纬度" prop="latitude" :rules="[{validator: geoValidate,pattern:/^[\-\+]?((0|([1-8]\d?))(\.\d{1,10})?|90(\.0{1,10})?)$/,message:'纬度不正确',type:'latitude'}]">
-        <a-input  placeholder="例如:39.915119" v-model="geo.latitude" />
+      <a-form-model-item label="经度" prop="longitude"  :rules="[{validator: geoValidate,pattern:/^[\-\+]?(0(\.\d{1,10})?|([1-9](\d)?)(\.\d{1,10})?|1[0-7]\d{1}(\.\d{1,10})?|180\.0{1,10})$/,message:'经度不正确',type:'longitude'}]">
+        <a-input  placeholder="例如:116.403963" readonly v-model="geo.longitude" />
       </a-form-model-item>
+      <a-form-model-item label="纬度" prop="latitude"  :rules="[{validator: geoValidate,pattern:/^[\-\+]?((0|([1-8]\d?))(\.\d{1,10})?|90(\.0{1,10})?)$/,message:'纬度不正确',type:'latitude'}]">
+        <a-input  placeholder="例如:39.915119" readonly v-model="geo.latitude" />
+      </a-form-model-item> -->
 
     </template>
 
@@ -67,9 +69,12 @@
 </template>
 
 <script>
-
+import locationMap from "@comp/locationMap"
 export default {
   name:'template-render',
+  components: {
+    locationMap
+  },
   props: {
     data: Object,
     type: String
@@ -90,6 +95,11 @@ export default {
     }
   },
   methods: {
+    selectLocation(data) {
+      this.geo.title = data.name
+      this.geo.longitude = data.lng
+      this.geo.latitude = data.lat
+    },
     geoValidate(rule,value,callback) {
       let {pattern,type,message} = rule
       if(pattern.test(this.geo[type])) {
